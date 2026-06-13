@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardioPluz · แผนดูแลหัวใจเฉพาะบุคคล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#15a89c; --teal-dark:#0e7a71; --teal-deep:#0a5a54;
+  --teal-soft:#e7f5f3; --teal-mist:#f1f8f7;
+  --ink:#16302d; --slate:#5c6f6c; --faint:#8aa19d;
+  --line:#d7e7e3; --line-soft:#e8f1ef;
+  --paper:#ffffff; --bg:#eef4f3;
+  --gold:#b8924e; --gold-soft:#f3ead7;
+  --warn:#c2562f; --warn-soft:#fbeee6;
+  --shadow:0 10px 40px -18px rgba(10,90,84,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Sarabun',system-ui,sans-serif;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(21,168,156,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(21,168,156,.08), transparent 55%),
+    var(--bg);
+  color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.kanit{font-family:'Kanit',sans-serif;font-weight:600;letter-spacing:.1px}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px}
+
+/* ---------- App header ---------- */
+.app-head{display:flex;align-items:center;gap:18px;margin-bottom:26px}
+.app-head img{height:62px;width:auto;filter:drop-shadow(0 4px 10px rgba(10,90,84,.15))}
+.app-head .titleblock h1{font-size:1.38rem;margin:0;color:var(--teal-deep)}
+.app-head .titleblock p{margin:2px 0 0;color:var(--slate);font-size:.95rem}
+.app-head .titleblock .eyebrow{
+  font-family:'Kanit';font-weight:500;font-size:.72rem;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--teal);display:block;margin-bottom:2px}
+
+/* ---------- Card / form ---------- */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:20px;
+  box-shadow:var(--shadow);overflow:hidden}
+.card-head{padding:20px 26px;border-bottom:1px solid var(--line-soft);
+  display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,var(--teal-mist),var(--paper))}
+.card-head .step{flex:none;width:30px;height:30px;border-radius:50%;background:var(--teal);
+  color:#fff;font-family:'Kanit';font-weight:600;display:grid;place-items:center;font-size:.95rem}
+.card-head h2{font-size:1.06rem;margin:0;color:var(--teal-deep)}
+.card-head p{margin:1px 0 0;font-size:.85rem;color:var(--faint)}
+.card-body{padding:24px 26px}
+
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media (max-width:640px){.g3,.g2{grid-template-columns:1fr}}
+
+.field label{display:block;font-size:.82rem;font-weight:600;color:var(--slate);margin-bottom:6px}
+.field .unit{color:var(--faint);font-weight:400}
+input[type=text],input[type=number],select{
+  width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;
+  font-family:inherit;font-size:.98rem;color:var(--ink);background:#fbfdfc;transition:.18s}
+input:focus,select:focus{outline:none;border-color:var(--teal);background:#fff;
+  box-shadow:0 0 0 4px rgba(21,168,156,.12)}
+.bp-row{display:flex;align-items:center;gap:10px}
+.bp-row span{color:var(--faint);font-weight:600}
+
+/* ---------- Condition checklist ---------- */
+.cond-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:640px){.cond-grid{grid-template-columns:1fr}}
+.cond{border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;background:#fbfdfc;
+  transition:.18s;cursor:pointer}
+.cond:hover{border-color:var(--teal);background:#fff}
+.cond.on{border-color:var(--teal);background:var(--teal-mist);box-shadow:0 0 0 3px rgba(21,168,156,.1)}
+.cond .top{display:flex;align-items:flex-start;gap:11px}
+.cond input[type=checkbox]{width:20px;height:20px;accent-color:var(--teal);margin-top:2px;flex:none;cursor:pointer}
+.cond .nm{font-family:'Kanit';font-weight:500;font-size:.98rem;line-height:1.3}
+.cond .sub{color:var(--faint);font-size:.8rem;margin-top:2px}
+.cond .extra{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:none}
+.cond.on .extra.show{display:block}
+.cond .extra label{font-weight:500;font-size:.82rem;color:var(--slate);display:flex;
+  align-items:center;gap:8px;margin:6px 0;cursor:pointer}
+.cond .extra input[type=radio],.cond .extra input[type=checkbox]{width:16px;height:16px;accent-color:var(--teal)}
+
+/* ---------- Actions ---------- */
+.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+.btn{font-family:'Kanit';font-weight:500;font-size:1rem;padding:13px 30px;border-radius:13px;
+  border:none;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:9px}
+.btn-primary{background:var(--teal);color:#fff;box-shadow:0 8px 24px -8px rgba(21,168,156,.6)}
+.btn-primary:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.btn-ghost{background:#fff;color:var(--slate);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal-dark)}
+.alert{background:var(--warn-soft);color:var(--warn);border:1px solid #f0d2c2;border-radius:12px;
+  padding:12px 16px;margin-top:16px;font-size:.9rem;display:none}
+.alert.show{display:block}
+.stack{display:flex;flex-direction:column;gap:22px}
+
+/* ================= REPORT ================= */
+#report{display:none}
+#report.show{display:block}
+.report-sheet{background:#fff;border-radius:18px;box-shadow:var(--shadow);overflow:hidden;
+  border:1px solid var(--line)}
+.rep-top{padding:34px 44px 26px;background:linear-gradient(135deg,var(--teal-deep),var(--teal));
+  color:#fff;position:relative;overflow:hidden}
+.rep-top::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+  border:2px solid rgba(255,255,255,.13);border-radius:50%}
+.rep-top::before{content:"";position:absolute;right:10px;bottom:-90px;width:200px;height:200px;
+  border:2px solid rgba(255,255,255,.1);border-radius:50%}
+.rep-brand{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+.rep-brand .logobox{background:#fff;border-radius:14px;padding:8px 12px;line-height:0}
+.rep-brand img{height:46px;width:auto}
+.rep-brand .bn .eyebrow{font-family:'Kanit';font-weight:300;font-size:.7rem;letter-spacing:3px;
+  text-transform:uppercase;opacity:.85}
+.rep-brand .bn h2{margin:1px 0 0;font-size:1.25rem;font-weight:600}
+.rep-title{margin-top:22px;position:relative;z-index:1}
+.rep-title .gold-rule{width:54px;height:3px;background:var(--gold);border-radius:2px;margin-bottom:12px}
+.rep-title h1{font-family:'Kanit';font-weight:600;font-size:1.6rem;margin:0;line-height:1.2}
+.rep-title p{margin:4px 0 0;opacity:.9;font-size:.95rem}
+
+.rep-meta{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line-soft)}
+.rep-meta .m{flex:1 1 25%;min-width:120px;padding:16px 20px;border-right:1px solid var(--line-soft)}
+.rep-meta .m:last-child{border-right:none}
+.rep-meta .m .lbl{font-size:.72rem;letter-spacing:.5px;color:var(--faint);text-transform:uppercase;font-family:'Kanit';font-weight:500}
+.rep-meta .m .val{font-family:'Kanit';font-weight:600;font-size:1.02rem;color:var(--teal-deep);margin-top:3px}
+
+.rep-body{padding:30px 44px 40px}
+
+/* Target stat cards */
+.targets{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:8px}
+@media (max-width:760px){.targets{grid-template-columns:repeat(2,1fr)}}
+.tcard{border:1px solid var(--line);border-radius:15px;padding:16px 16px 15px;position:relative;
+  background:linear-gradient(180deg,var(--teal-mist),#fff)}
+.tcard .ico{font-size:1.2rem;line-height:1}
+.tcard .tlbl{font-family:'Kanit';font-weight:500;font-size:.78rem;color:var(--slate);margin-top:8px}
+.tcard .tval{font-family:'Kanit';font-weight:700;font-size:1.45rem;color:var(--teal-deep);
+  margin-top:2px;line-height:1.1}
+.tcard .tval small{font-size:.78rem;font-weight:500;color:var(--slate)}
+.tcard .tnote{font-size:.74rem;color:var(--faint);margin-top:4px;line-height:1.35}
+.tcard.accent{background:linear-gradient(180deg,var(--gold-soft),#fff);border-color:#e7d4ab}
+.tcard.accent .tval{color:#8a6a2e}
+
+.sec{margin-top:30px;page-break-inside:avoid}
+.sec-h{display:flex;align-items:center;gap:11px;margin-bottom:14px;padding-bottom:9px;
+  border-bottom:2px solid var(--teal-soft)}
+.sec-h .dot{width:11px;height:11px;border-radius:3px;background:var(--teal);transform:rotate(45deg);flex:none}
+.sec-h h3{margin:0;font-size:1.12rem;color:var(--teal-deep)}
+.sec-h .en{font-family:'Kanit';font-weight:300;font-size:.78rem;color:var(--faint);letter-spacing:1px;margin-left:auto}
+
+ul.rl{list-style:none;margin:0;padding:0}
+ul.rl li{position:relative;padding:7px 0 7px 26px;border-bottom:1px dashed var(--line-soft);font-size:.97rem}
+ul.rl li:last-child{border-bottom:none}
+ul.rl li::before{content:"";position:absolute;left:6px;top:15px;width:7px;height:7px;border-radius:50%;
+  background:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+ul.rl li b{color:var(--teal-deep);font-weight:600}
+.flag{background:var(--warn-soft);border-left:3px solid var(--warn);padding:11px 15px;border-radius:0 10px 10px 0;
+  margin:14px 0 4px;font-size:.92rem;color:#7a3318}
+.flag b{color:var(--warn)}
+.subh{font-family:'Kanit';font-weight:600;font-size:.96rem;color:var(--teal-deep);margin:20px 0 9px}
+.ftable{width:100%;border-collapse:collapse;font-size:.93rem;margin-top:2px}
+.ftable td{padding:7px 12px;border-bottom:1px solid var(--line-soft)}
+.ftable tr:nth-child(odd){background:var(--teal-mist)}
+.ftable td:last-child{text-align:right;font-family:'Kanit';font-weight:700;color:var(--teal-deep);white-space:nowrap}
+.tip{font-size:.9rem;color:var(--slate);margin:9px 0 0;padding:9px 13px;background:var(--teal-mist);border-radius:10px}
+.tip b{color:var(--teal-deep)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 4px}
+.chip{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:4px 13px;font-size:.87rem;color:var(--teal-deep)}
+.chip.bad{background:var(--warn-soft);border-color:#eccab8;color:#8a3a1c}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:640px){.twocol{grid-template-columns:1fr}}
+.callout{background:var(--gold-soft);border-left:4px solid var(--gold);padding:13px 17px;border-radius:0 12px 12px 0;margin:16px 0;font-size:.95rem;line-height:1.55}
+.callout .ct{font-family:'Kanit';font-weight:600;color:#8a6a2e;display:block;margin-bottom:3px}
+.callout b{color:#7a5a22}
+
+.vacc{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (max-width:640px){.vacc{grid-template-columns:1fr}}
+.vacc .v{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:#fbfdfc}
+.vacc .v .vi{width:30px;height:30px;border-radius:9px;background:var(--teal-soft);display:grid;place-items:center;flex:none;font-size:.95rem}
+.vacc .v .vt{font-family:'Kanit';font-weight:500;font-size:.93rem;color:var(--teal-deep)}
+.vacc .v .vd{font-size:.8rem;color:var(--slate);margin-top:1px}
+
+.rep-foot{margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}
+.rep-foot .disc{font-size:.78rem;color:var(--faint);line-height:1.5}
+.rep-foot .sig{display:flex;justify-content:space-between;align-items:flex-end;margin-top:18px;gap:20px;flex-wrap:wrap}
+.rep-foot .sig .doc{font-size:.82rem;color:var(--slate)}
+.rep-foot .sig .doc b{font-family:'Kanit';color:var(--teal-deep)}
+.rep-foot .stamp{text-align:right;font-size:.78rem;color:var(--faint)}
+.rep-foot .stamp .clinic{font-family:'Kanit';font-weight:600;color:var(--teal)}
+
+.print-bar{display:flex;justify-content:flex-end;gap:12px;margin:18px 2px 0}
+
+/* ---------- Print ---------- */
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .no-print{display:none !important}
+  #report{display:block !important}
+  .report-sheet{box-shadow:none;border:none;border-radius:0}
+  .rep-top{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tcard,.sec-h,.vacc .v,.flag,.rep-top,.sec-h .dot,.tcard.accent,.chip,.chip.bad,.callout,.ftable tr,.tip{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .rep-body{padding:8px 0 0}
+  .rep-meta .m{padding:10px 14px}
+  .sec{margin-top:20px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== App header ===== -->
+  <div class="app-head no-print">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAE2CAMAAACObbGVAAAAtFBMVEX6+vr+/v7w+u/9/f3Z8fDI6eeu3+Cp2tiT08+Fy8ez4d3S7Ozo9/dlvLdKsqw3qqQbo5wUnJYKnJQKo5ojp6Juwry64+F3x8NXubQho50ap6FGsqs1saoxpZ4MqKIinZkIlo1YwLvX19jGxse3t7jn5+iOjpBucHFubnBnaGlbW1uurrDu9O+WlpeHh4hzc3Vvb3Ha39+enqDOz8+mpqdeXmB+foB/gIG6v8BfYGBOTk5+f38N/AhAAAAym0lEQVR42u1dCXuaWBe+iFZNiLIlCiYmI7IpS1pJp9Pv//+v7ywXxMRsM00jlPNMJy4swstZ71mE6KjFpPSE0lGbqQO45dQB3HLqAG45dQC3nDqAW04dwC2nDuCWUwdwy6kDuOXUAdxy6gBuOXUAt5w6gFtOHcAtpw7gllMHcMupA7jl1AHccuoAbjl1ALecOoBbTq0DWFVVoSK9ezdJn30Bv5haBfC/vJYnoLYJ5NYALAgV0R98GY7G4/FoeHauvRkoVRucjYiGZ4O+JlqEcDsAVvEqtMHoYjLVDcM0LcvSdXs6uRz2lZcYW0UotavZfOroFpPruovxoBV3hagNABNKZ7NryzAAVtdmcnXdMvXpHDEGIXyMKXG/4eXUtfRyJxvwHZ9roj1iugUAAxSD2bVOTOs4ElsHCP6Pn07H/aNcjPCOroHddVfiC3905+yzr+fXUuMBht8/uNABI0AVYMX/auQiWc6s/4QlCd4pgqvjHgQv7GsM/62pdqLUcIABpv4FSGZgPZ0BPkrGzUjUEVYRxS9Tw3L3O7mAsGtNhEB5LoSmyfI8tdnSutkAw80f3ZgIDQP5BF+HZLVj68bkvL6jULQLy0Jh7tT2AmYfIfSjxWIKtFgsrifDZuPbcICV/txyQdEikPqzhCi71s2w2gt49OyGVPbhhsDBZwDwwLAsE/4tl0vXmmrKEU+5OdRsgM+mJGRrOvcJttU3S/1S472Q7+GhOPYkmKiCr+gwpL5BcPflPg2lBgOsKiMDZLMjLeY9ksR7S7SqWf46IIkRMnOiKeQAqTOjFOpIKABAOsMOrvWlBNhlgHWnD27YldZYHm4wwMrY1G2dwXXRBSZTGpxhfE1BC3STnL30ds0FoAX204UBcr3O7PAEGLSfSQAbNVngnMMns3ljb1NjAVaVMfEvo3d7i0AbGNiYjYdfvnwZji8W+p1pILrsQhFoC+BhMTfdQ/ULj8L1xXg0/DIcoUAmgPU9wHAqa6Y2VEw3FWCQzyY5rpVkNgxnMh5o+01Ef3hxe2e57p5ZHWuuKZfmob1tGItRfb9HAAPTK+OlNWsmvk0FGOSo47o1fC1zOj5HCIT0WwVpzf74xkL3tnJ2zUtQ3HWATePiCu8Bbk6LhXBotNwORbTl3o2bqYabCbCq9KduGdxAeI3pSOMv6kRB6jFaUIRvqY1tV+4HzG1MBo+ELwFsHwI8nF/OL7RG8nAzARbiAuPOkg1t3UAP6OiVYKB6YVC8yq4MZ6mTHXs5HYrHTi74wXod4H4jca2omQCjg+Q6tuRHc3pWiuQjJBTt8s5iv8epQ2zo1lzGqOu7qo9ENAIsmpvp0USAQUCTxJUCV5+cv7hAANiMTddd1hwjWmXS7+bHpe7Aqp4EVwY6mgpvUwGeIY9Js8ni8MULIKhCGSFUjlOFPnRLt82L+gKEKnv/qUK92ofHYK/z8hvRSC5uIMCqMrDdCgJrob1ll5Flk41lE+djYoA+r+ErRpMF0ITo2q0BrOOaw4K/XIyat5bYQICFcmHtA40352+46cB7FybBVYU1reu6fMb1BU7YwRiYWw9qm1ZFpnHeOGHdQICV83KlAPxb840L9Ko2tTjPgwG2jKs9VqpyZnBWh+OwD6XXwiNumQEEe111AH84ocmEJjBr0osnVvBxks6PzPhwXXNc17+4vuDapKarnJC6nOZ1B32pDzqAP560hVUBfNN/q1YUylC3ZajDscEyO0jwuJIQkgHm2nsB7dbWJNylNfjsi383NQ5glVfzGCjgw3fseKm7OlvSrnP+5JgMpeNW/FouUNQXJTqAP5yEcmlWweSbN1jQJakKqGEZ6zBGj2MbOqPqkirW6xzsdgD/VhLadCmDHI45U95RhEAr+TbypDlXDy5b6mACmZOjDwB2S1ndAfw7aEB5FsyIV+/xS0VPGVuIoHvTVx/td2UQwASzfiieK6saUz86I+uDSYCtZFU20PRNMY7yBUak5rAzZ9YdEgFM7u+jPDyZmVUC3gH80YRhSluu/JmXr95uUf2Pd+7fgPN8ZO2eAGbDre4CS94tZbarX71HJ5wENQ5gdW7ZUkSbb8hZ1q7OtDq/Dg1zemSJoRboQCMLjOkawGXRUhfo+B2EEakyHPW6yXN2Y5k3V/v3QhnfnR1R3NrUNI2SDp1fg7/ASOXdW+LeJ0bNAhgrVWxevcdk11dvd9+xgO0OVLU2PL7laE+zvWUFqmBc+6bfvEKWZgEMNLiVAOvG4pXfLpSRhfLVemf5yWC/XGi7dv3pUJumgRsHsABtaUsRbUxe3XqC9dy29boxVmvSIZPuZGaAO+2T/U3fYC2a1v/se/A+ahzAQ8NmY1c3XsVt4HBuzlvcqYpUZWDU1gvtQ0D784ZVozURYNcuAX6RKFOHQDLeE4BCgPXHAGuDwXm/3x+Mr98r7z+bmgiwrGcwL1/beC7zoY3RO04hObhM3nL6fFYDHShM1Bt1AH8gMcBOGed4mc5tCbB18Y50KgB4X3lIAKuY8VOuMpnveVhOgJoHsI4AO28Q0ZhbyyEv6z1KWIroCuBzSulaltHKTkR/KKlkRcvEyItXtp0bdllb+I4I1AHAthTRY6sD+DfRwClXg63JS3cak6erTNmDBJ1XSK37wZz4LpQL0+VUbNs66wD+UDovK4yslwWvqgxNWd1i4QLwm09A2VvuIcDaxKTyJgywNCwc3TiA+45UjpZ+81LMQVUuTWluW29bWKx2vLLc/Rq/TgBPqdAYe324DcucbRrAqrYwqOcCZr6+6N5qU9dxZeqH+y4lrE3vTJP6IZqWOceChvNb1vtwNLthRYaNA1iZG6UONkfPx/6FclZPzziSnUdFwcfOIJTzMdNsNh5rMm2aVxAd47phN6xpAAtlRrFKFNEvxSpBQqPrqhs3JNCPGWSa9kxC9eNyUoHdBOTDAqZ7s+5Y8wAeWnyvLUd/aXlWm7KuHt1YBkrWx/pam9k38/Pj+1IuPa8tUNs7Zb4sAQZR0Kw71jSAVbRxdZnC7DyrhIVyxZ04FmAAG9gH7ZF3I/6ylrq5eF2hYmWwdr0s88CMsw7gDyZxvZSJcc7zMWbMnkbr2ZxRjMKx4cUBnRlL3batt5ULXrnylI5x0zAbq4EAg3K1pStsPh/q0G4IYLCez5YgXW/vJvULRfwtEPVvqj0FtW+WyZbWRcPwbR7AGMAowxCW84wSBRv6zkDb6lpTNHsJABtOv3YIyuxCgWu9ngcrFPSCyzM2bC2pkQBjopXz8v1WldkddtGxsPRhYZEzvG/0jUkb2LDDcYw3xDAFPlGubM3zhjy/E6PGAYyJs+a+fcMzSVLAoeQqfyFpDEaWbdWUMCVX0zoEsvirdLGsilleSwM7PWoewOSVlvUH5jMN+LEKydFNqi4dYkNp161jw7m3lLfxmlUMEoPGQGAUy7XesWhxItQ8gOGOl0atrt8dXcrn8gcHvsVal3OHS85qQeRBGQ1z9b/U1wBGe2y5tCh22ZWu/Ba6kCkXjmMdV4piAY+A42J/B6AJlh05+zoIwRqaK49eabsBTvAE269QD5bFRfPuViMBPjM4U8MB1Tg/xoFcgWhhTrNKq/WY1lEmgKiqmJplKxYbQ1MvIkz9kwQnzqrN6znbSIC1BS/JY1ecI6EllRMwHPMvReWlAox6uaXPiwu+uPBHfpKuT168A+VqhhDVB82iJgJMZhYK2CUmwR0xpOEBQCFuSKGMQQ9skzModx/vW9np+u2A2sDL+/DkWCoHplnV49xLwVzcFKCbCLCqcq0Ytnq+M+4exytVLAZFgKsyQvSrXMcsnWYseJDsi9HHy3fi1ayGdw0EGIceDWolYcNHLIwSWiJHxH4VGGRzucGA+2w5Fwb95eqjq4v5S/TXX38dvLtsSqVwAwFWXmv9qi2omNeUdYSkc9HtLfN2RncgwY27Sd+2ZJ4kZuNaFmdxvIFw5IfRkLaGjQJY6kFkHVGjw204ac4FX7nq9ExxDbtMnsVIGLdgmmHylW2BmXV+q3P9t2PXyJFkHxKFOY33dPj5RGoOwG8XiDOMHbuVRFZoAQpQssbUVfrcwXYNtn5WZtcZA9DSlDXp2nY9Y3bfsEP2x9v30DJujas3/6DPpOYAjAVgROeP6eAzeDPFTiuuWclQqjxxkFXBBBZU8ODa7rWmatdLDGbdzb6YcohhNQORB+KVMwBocKVT75AGXzZj3aE5AJ8t9FskvPXl/+kvf3pbkcF1RE4VVqQsEAx14Gq9UOZkQ5uXSg94HecnGfaNXA/kkVpM1n7UJY0wrX1FX8/VRty6hgCMGC15EqxdtpJ0JXPpxwgXmkqxjj3uEK2lfsZrB+Rf0ZTC2/0OVElsGOU7XXY95Jw9i75hDiYf251rnZH1S2lmVUZPbVxSOXpFrzMbQW6O6u2TLg3bkRlzFCThXjtCnZdFZbDjcnJeUwGDwdyqhjw41qT6hv82ps6/IQBjQ2+nUo76CyQRNvTz+t5Dg4cXggWOc88oFYA+t9x9K7tDpTq06gUszVC4R6ghAGP7I90qbRyaS6jrhEBZyUJlBxaGMHCqt/soERosZ0ykBs/p/BYAdpcW28DatOJganwpXWyBAwzdsleEvXzUXboxcUqlMQArQpsYy7KzPgYkqLik5tFQUwf+GLwkSz90YsR8KfMDhiZFsacah8QuTK40c61FbcJoTTsjwM8mjjSAmgIwjjCbHAQPJ5PJfFqH2LqWH0/mk8tDkSqoSzwJZhrYYpgX8vMzUw4treVskVVmluoX246/ZS7EiVJzAGYquQxlKcYs9HLcFeAw7ZdC9rEUVQlIGsFzvcRRsndDWb6gXVvcmeGgDEabVCXCaHy/cS7ESVLTAD4gTKHFohK2pG/vJtqzV0M973T9ZkyLjFaZREtLxy41edgLaFVcWLW2s40dPErUaIBpLui1zW6TcesYz89xVpknbx2yzWr5631cWVxS+qXcknrK7+cLWy88Ng2gZgMMaPzlumVI0XGty2fSpIXkVFooBCH9ZR/lGt4aZr26FCdP1zxrEvyffZn/gZoOcFmjwG6Sa1weDyByuXDFlbWOwkI5H40P+tGOrGXNraaIZyeiP5EGN9Z+wUdHhI/CoVHTLIb4rrbQJNcgyzdCGVZdXpB/jYY11XlCjQdYVQaOVY1/Bj38XG46rQLTM4A29DOXjSv/7pQjHAC027hy4CfUeICp+d2+9aCD1QdHSFVGdyVfGvozQ59pLVGvzZE2L5uVgHWEmg8wYldrTQem1OzoZoPK9bHmz+I7BK/XKUcjOtbBANpmUgsAVjCHo+Jg7FV2eWzUr3aNRtYtPAvPNasj+axXpphtTLSGpVAeoVYArKoXZlkAiIbUMcmqUuE4CWj7yFqfSvazUfN/dXPRbzz/tgRgAAdHCrv74cCX6mPnBuEjgG+Ptb1jfPUavg46wM3Hty0AK2Iu6/7lnO/Lx9pTYBtoQvjuWMIrbDw23GUFsGPgCkMH8KmQWq4PUFk36uHHKTXYj5CS8Y72f1cVMQP+tao+mPpN8ypFj1JLAFZwBcjEzoU03AonBD/WoIKaV2IqgHZEQWsXlE5QMnCjVwgPqD0AA8KG7bi2bDGrm9NDHpTtZ4+1TlLp6ahN/LZuBi3BtzUAo0mlzQ1qrVJaWoDwQdmDNjUxl+OJDS2U8wX7Wdye1rWmLZHPSnsAJtLm5lICjP6w6zwKSV7d3JnTJ109wPya6vZ+/XdpTdsin5U2AYwsJ8AfrlJtbNs6nPQtFO3si/Z0v6FTd49Atp83ewHpgNoDsEK28AVP3XHk6pIx27tL6jOlCCODl4odqhh2jFbENypqFcBA6oW55IgHz+OwLg7dpUfQoXtkLmvr+7o5aUjJwhupbQAr6qzMl2OIjckLbXQEG2a19X1j3rRuo69Q6wDGiJRtS5Z0aGgS5ms8s7rQX5i1dh26a16IVsSv9tQ+gFVltF885Jkcz3YQPZsua+kbpLIbv3z0iNoHMJnFloxalnk84qleBSBHOgYvq+iVRf2nO4BPnsCxvZFDaKWtZc37j00tjE4aNOKbhTMAfNvkBPfnqI0Ak26lCXgyqmW5xs3ZAW9iJ4dFVVlICFvOVQvxbSfAZB2blanF6ZEjZe8HA75fbEPf1y+4ujFt2MSrN1I7AcZI1Myocmmx+YZrXWr7ph3q2LIOWgOg+9tGfNsKMBvTVmVMUxHolBeCBfJ3fTyhjHi1k1oLMHY0vKnQpZqVpTOk5rHK1dSy9QN86/K7XdRegHEVcEJdR+XyoWMvMZMHxLOxLw51bGTts5ZFN2rUYoDR1LrELFmu/yekjcm5dll2w2LryjUnzS4ve5naDDDSWNfL3mYorG/vbqaWXW/k4uoX7VpdeERtB1g5uzGkKc1J0Zal14LPDqrfNuPbeoBRERucMq1LhA+sK6eN0as6tR1gUsT6Uq+zbcm8lm4u2hndqFHbAabcm5Gzd4tq2tcy2q1+idoOsMIdpKdVUWhlX7kUvWw5//4RAJOYlu379X31rzltbHvC99AfATAFnw2cN2tz90MwtYzL9otnpD8DYAxUDW4MnbNjcZ7D7fAPEM9IfwjALKZ1Yl/sBv9niGekPwVgbJWljHQTpLPrWjMUz38EA/8xADMNFoCw6Qxbl3n1PP1RAGMe1t3d4o8Rz0h/FMBIw9mfYT2X9IcBzP3c/xj5rPxxAP9BylfSHwfwr6KmeNFtAHjlIa1XL2yCV3l81mHbqfkA+0EYRVEcb7bPG09CSbZpkEny/+MZVaEBNeTGNR7gJI9zomj9wlarPI7pMYA/8erNB3+G+tPr6+tRM9R54wFex3kYIsDhWnma+6rykA6RxXmEW4X3YR76/w0aVeljrsDsvxzj91HDARZKGhG6eR6vURKnQSBFMf/Bd/nWj1CME4X5f+fgc1xNvsRBxgKkdTVO6ySp+QDf53nm+6uvq0RBgc2CmLCUf6LNt10cIsI5s/p/BFgFgF3XtSeLyWSBNJkvxv/tkB9IDQeYRHQepqV/m+T3+ROKixXIcQB8mxD910tWtWsatWSaBk98d835ySrkxgPs30eAoBAcngKTK6ro/p65+SElHQxievtLTolzO9yyKR7RsQa2J0JNB1gAC8dF9Tb5nmffkWu/Z39///5d2tcFWtEonklP/4qzXkrmBfbF/x1M+TgtajzAQimK2tsk6fWSxwQXmRSkf7Pe+w7/DGOq6nBO6vf6mv5MZye7gNEggB+bquX7N17Bmszt14Mch02Iayc7bBCgCmlFU3BMrcYlHm71+XRqAPd833/ykwR86D/iPbyhydfVagWbH7q/gvf46ifKHi6hrBDgvYuEOrvn7zxvh+c7POWB23MEJrWazST2m1YDMeUIYuVqfgpFbScFcOKlGcrRYqXsi/GV3Tf48B4+3dV65Qil5wV5GIKJFax79RsJL1fbDG2qPNt+3X+OAO+jWLhVkeVog+XZ2q+Pg8caYh5hCuiV1lsdVdxYaP1+X0MVIREWymCAT5rWp+wgofSvrcUJNK09IYDFGk1gdFSjKNiVnYD9FP1ZdH6i+PuuBAIYMovJbgrh62xVR3gVILgAPu5YJOVX5CrtOdhP41i6VFGc18Kcs8l8vhgihw8X88lkrsErcTnnD3kTdTBbXNu2Pb0YanJ1WVW0a0wFGkztOfV70RbutWsPP11MnwrAYAYFMUUTKRZRWcZeHiGIIQMRe+XWXixD0CF4Q3EkP8fbuY0YuDDEEGac7+QZdnD4MC4fBTCro7A8HRz5W5WEt8Dx4lTxP7oDA9nBVQXterm07sros3apmzxH3rKmQ3lmMbFc4/KLs4RPZwI7jNvuNQ0a/1w6FYAV/zsHlRFMWh4qGMccg8j3KEkJTcnDK3R3Aa8Y2RjwjBhGEKgp7HEfImb8VMQxfSUI4Dxa8ZtVGOVVtIsehJQlhlAWlm27JcDL5bVGEzB12zZHPJxlMHV5hg+Gs1x3hgaWEPM77HSpwye2a15oOEjPXV5/fvrXqQDcy2IKKANeABpCHaPY9DMQzyBCs7950SjOe8RFAYYd4zBL0wyk+j2wOVpUcPeLB2TcCDVrjrFJ2JssZwkwhSmF4gO+8Hhs8qD4loUYCwtjXm1kgC0GGHjZYoBvTJoFwFPHYQN4BiTCtjVG9axdALiOTWEP3TAWPAHi8/E9GYDXyEl5lK78xPeyiAQsmj4Jqtq13xPJLsMVAxbSPnJnFPjIUaCMAUnAB5H3kLPhMVh/TUSyKkgMR6lCTFsBrIosxs+jLR3AL1A7o/SmZwewsY0RqtYRxjBoEq1mWwSwQvN7bN3VLXs6nepLxNMgha0M7SUNdTENAztwIfhXJ5D+dSIA974TetLW6aVxSEIazdGgXKBfoVSOU5bc94BQwoaYn6OkTfFlDx+CMA4SeVgPjTZSvAgwPDMson+wXF4p0pJbw+nyOGBvCxvg3Y3xmxrA10vHNWmaxxmKZetm1Nc0bTCjInKpaKl1nnkzx1GZ+J91ErXlJwEwyk8pJfnnCOTKmMVur8d8IBRQryF+yKo5/E7Aq/gu265oT48kbybdJlXwajEGKFV0k6QV3eOA9Wpvkhfx/X1pYU8sHQFWJQfbEmCbABbKBUhl96asG+exmDRfmppf3t0M+hyghoNcfLoJrZwIwGD6IsvmZSxDkKiV7KZUHyJaceRXQYs8XdMaYW/FO6q0OBzFe+REj5YPv+GbFYGPFpfYgetVy/ARuMoIALOUXzwBmKxoOY+HzC13VO6pzkEYy4G2WBsz6YPmdqUmdvrK59OJAJwix6b0UrAVhAjuDgMYHulKMpmCOAdE/vmHQO5xWEQFYU32cH2vAAQzH5gBluD7RZCIWtRki4cOGGAwh00qDScjSwJs6Qzw4A50rK4p/bPhcDjQlNHStZeXtTOOXGldgxl2AnGO0wEYOTgFygjVhKDyngIccjTZBymbhxzmiL9vE34sVhj6iLx6WAoAlk8OBjryePVELxLOhD6pBBUB5tp/8oNJwWpTy9FJB2tjpOHcho3ujOl4Bmgu/6pUwvlfZHeZFyjT3asOYCZWrxR5CgFVlQynMCzDGiV5mJchnR4MRMUcqAAnOQdQSRkj5n79wDUOBsMMAe4p6wyfpCAI8A9Laj/nlQhVIMCutQf4ugK4GmrZn9+ZLvvCFq8Gl2cbOoSv5Qymhm0vO4CV8s6kJH0p9Mh+UBiXLtGe9iKaQ8nfaTk/x2X9B7LPfhDkBwtGATrWEuAoYhHNTxOlWIYk0FWQGCgN0NpWF+YBwBUHSytaKFc2LvfLpX5qBlGuBuN8eLTB7CvNMR3HOusALilFnUoIRxLgKHrKwREbWUgoWIXvFZnMvAJ93UN3JzwAWDwGmEznooxy7p1kvwIY3aQjAIObRH4waGEHgV2alKtjWRXAqvLFoB4g1mSAT4RuGB3AFaWYUsNhYVKhIKLzowBHFP4QHHRSCGSOaqWkpNHVfQPAIQuLqLLsaKkJD70HWFRGlkArWmeAFRWDzO5Sn8xml9M7DEnbFnOwNnVt3TWckYZZW5Zza3QiuqKUVKUv132FtIePiWjJoL6XkseDrwtAJ/7e41jGI9sbQ9OHAKvsHIes9OOANsPUPemmLZauLhcbMB+nDHSwaa0oV9TiY3qF0GkjjGXZyzkGwZUhKmYdF4EFyXRH7wCuaI8D0ysA79I8epCOLONKURHea1u3olNpZAmyojkeyQ7T2meijYO48q/ADzYwkqUywHYZqpRG1mxp29ZNX043PNMxGj2nLtQzdICnuH4oVM0Gx7kDeE9pfOjAHgFYVAALxiMrV+BXZdhLYBA7zntiH8JIpZtEAOfsJlEoOs6qbVi2l6ebmMZtCbBlmTeaKgEmDhYL196PIBbKX7g0MSdDbYYuMSZnqaoKShu4udPBFR0B+JibVAK8xkoUtomk0RRl/Ar06kM9RpU+9YM5rJHTeqSgfytao/zO8TAcJXxHRtbQJICFSjaTjGRdY+vpcpVIVcZgLRtzOhXO1DNn3N0FOBgs7FMY43IyAJfuKtMzfjDyZxWqvJerEB4nt5PrxBY1rVnsPMQuiO9rAMtIVsL58Klck9jlZKat2QuagJFl0GLD2Fwu2cjqo39LiwcEsFHOBweADccxGeCxZevmQlBDn6slTrw8/+zbqpwQwPnbAZbbg8tUeLs12sn3HIBmFxc2CrbrggNh9UAH+r4cydpFvLgM+++8lIJicdbD/CqhXFiu7V73FaV/Y7kWB5pRvepkFKuL5YGIBoDZTVKVM8wUsMYolfsY0DY/P51DOXGAd/VN1LoV7Ue0vPgQcx1SuEkVSl1NKMOHMz3oAUnrAO9DlVsKidzHRHjUOCwT77BqwbVuLi9v0K0Fh2g+m5vw0rjR8EfMEMZruYyAlra9d5NoBPFiPJo5ODH+bnYCKvg0ABZHrOioysOpqB6q/PHANSpcNShXFoEwF0dWEtJqhdTBahmo5gUqIYr4npIKpPeNiT0SDY0GH5rmnVHO1DJpxpI5pnDo0HCAmzFfkvJ3RkYJMKb4uDQCkaIfunUSi0mnATAbWVHxyIp+CnCZuk4rvQ8RAYSMXBXtA445QC9hByWLC4hovUkrOiwBVtaYtCWpnpeJ8Q2uOiKwysGGrrnQSISLiWE79t0lj5QHPV0BLMSFXCmkKLV5Euv9pwGwULINiMq6FY2ic/N4NQk3qgJVq4CiySCm87WobZUUuZS8aGvhgTcZIrrDvR/2S8x+GsZxueX+ACrqVYtAxeUi5GNaUJjy4HdVObdd27wQMrt9fMd+MOfOzixLBqhN4zTwPQ2Awer54XlebX2/R31VHtWZ+PRhr/a+SIN0u3t8CcluXRSFl2AG+27teT9IEiS0dynKyZjebdMAD9A7rDhRziYGOEimMRlo49u7uzvLnY7LyXeqMrAtiS8+DHcAtyweVXFPEO6WaTiX5fPw2XQiAP8LemFu+38+ljoYzmajAYUjh+PZ+KwvhwMQXV3uO5lqA6BK2YIhfz7E9eKTUL9EpwKw+hgY8av6IlR9k/6w/kmSTgXgU6P903XSHThepw7gllMHcMupA7jl1AHccuoAbjl1ALecOoBbTh3ALacO4I+gE4qMdAD/Xvrtt/vTAf7s87/xV67WRG9qFi+8ddWY6Qkv+9tvxe4tR/lF9OkAN4ISufYcvwmaXrjZPLfhDzpM1YLg4+n3Apz88Eoaeh7yAw3U+PGD/3m/89F+O6mYZ5tHbwc4j+OivM56gz7sZIBNZnJuOPFb6PcCvIqr0QmcsYE5zeVboOy/n+JDKIjv4/x7nuVv6yUexFWySFxvosdZn0EW/YKu82+l3wuwH3NnqjrA4ckDLJRicx+HuzeO5MG07fKC/okPtDYK7wDTsg9r2z+SfjPAVHcd8FyFIIPHeB2kQTldIQiK/36KDyAhEhrq8dZxPIAwXybOjTjYKQmyfI1Z2W0F+M136NTOLYrwoKrt5R1F/f/icBvQw9imzf9dl/kbAE5WK+zsu2954q92VXPgBOv7xP6lQp5Fstqt/N7BLfjqrX/s/NpBd7ta32E4Bx6xJ9sOY4XxzvNWtf1VH49Z/13+7sfBFvS+t/9Z6v5lDzPq42/8e3or7EF8cCRqaixf+z6byEJRuW+igCve7cpWMSi/y4Zg8KtXH21PfzjAuyCn/iryjgixxqL8MJNtYIOyQhfbE8YZaTm/yGn+TbE3UHYZ57em/OQnBZpmUbbmB0IU2EJlTa02OJla5tRmldXr4VnjPKi6mcotuM+sKrirbfleKfK8zKXH6mMfu748cGO2LVmFUVrCCIfG2jX+LVi5SAn8Akf8SBzX1Gsi3/LFgFnJDcH8b1SmHHysvfXRABfYFRbtKO76KnrBhpoWhjFZpHg/AgljRkaWwHaxVH8fP8iGOVg1iIUOWMeQY4b6DicwUEvKoIeWT7rBrzepBBi9kZj6VUY4rgOOkFDLS2qilSZUxIRb4CbxBruQYs0wWXvcMg9OGIVV90sSqMjBBTbewlKoiOpVv1IUA2CUPzfDBgESYDiml4Pp7VHbPi6Ji7NEAhz5Sg9+wUPMLXR/0SCJTwG42EiTOY+4OAQ+gAtDwKkQ9ADgKAzIYo2lpS3bB2OHUawU+44eZIS1CekmxIoi2GKDXOX9w+dYlwAnOfopsA/gt6Z+AYR3iE8O3GZBrio1YvqHZh7yaDR8H5Oq7aFxX3FwHEqAv3FDrQiPDJvTBtixi/DGDpnYeisII0zgFwXl5HvUZVWm14OAomeHqjN8uj4atfc27/okAcaKvrhYrbwsxhp8qvuM8vVqtUuxOaQ4ADiIsMjXIy5a+b6HVd5kjPBR/F6yCmKuAkw32c731/ic+CxEPQ+7t/jcmseDs33zE38tKyGCGHt++/4KW46TpEVDNsW+p+yqYivFiN4DWlj98AjgBJ8R5OBeBsJ4lSTYAfVnISuV8dDEr/hBigBTl9yYeRplGFyxh4/Ump4dvCqBrnW2W+3wAckay8Fw61kPiRTurIxrrOR9o66Ej0U0Trbi1oO895a4vCr2l4fprenur/kLsHDhyUDR60fkXOP8jR5vgLrei6te/thADSGHLbgGxoMtfDoS/y5A+ptfE9GKFNF+SCLaz+UFAUdjkxCRlX2bkow5M0ARvZbqABWIUrBoTuDZyBMVjwcOFzzpMY+AScMnRViNARguP6SSQWJdBCvbPGTJylt7/lcK/AmwfeoAgw2GxbpsSmHID82udQb3FvsyYFNJ7mylUFcMnw6KYhP7eavUfWlDHAxcsUUr+yveQx9DRyQ3e/hVXG5R4BZs4GNlal541fsDDq4B3MPy43S9S8C4lu2X5BOMPYDudwRwlnIsB60CtiHot+/4aYfjwbOEv5l7V6/i1xyw0wU4AdsjWK+R3aSRAr7KN1JJEZrFYEOBXE4rEQ0czFqOLh0De7IudFc5E2lUCTTqxcNsFYc8AgBh8FCQbvgcW9kWj1o84GOhfOVSfhFsIprHUXBPYZGSHr/HMR7EdU8A5t+veLLeDVeEsKUAdtpab9c96iCAR85IScfRty3+qnrHnx4dQnLwNstScJJWgtTKr5nI9hkAU7EuVl0nrMO4UJQ+pEZnBwCHZGR5sZSeCHD0PVF2aVGkafot3RH84d/J/vgIbE9ZUQ8HZOk4onualJZrVPTItM0jKSd82YYnKahGHGyxlARlD9+jGcZm9hEjC7tEqNgwYoNms/QCVsyrZF7E2LcYbCoqWPX3p1LK5xFMgVSROlily0MttYuftBNqEMDsQRDAEWFRbMgKzWVbm7qIBqwDMluq2SjIPImyfZDW5lo6LQcAb0uAt+DMstxXEer1twzsHp7F0MuiMsz9NYr+2RKTYps8nAcBth4xMb4nwzwQbOruOTgsASYtsdsGOM+WzLcd+3y4bcXB5PgQoGFUH8qGz2ugSoClXoAtpVXdVIBBClI8Nvmb2tpg3W80TMDAld1kybKicEX50gPzcsVjppiPtrwAFT0wwHHVVlpysMCqfpZyPnlWCFiPmuB954eFHyMiYDnuFI1bqNQm79geh37wHmCMsuGJV2gAfpOte7IM13dXpGJBJIWhtJmyqDZVETvfUjsYaUUrNGgxSnvwv6CpVjTdFdHjUAMB7JEMRdrynQ0kB6MuCiXAYbwq720OFqgHHJxtt9sCZynVOJ5V7pakvryTPjX2EKttxt0CVsT3ah3giAD211kq28zS+9U6KN+XlhDJelVIQPBSvuF+qWQ3kK/f2e3z+AoZYGBbWcguVIp5VLWNdIgtr5/JEB2Ko234y0ZmfhLA/OOT72QHATdyOJKsHU9Rg8poQpgOAFZReoErgWyZyZvEUu0RwFvyivCw2KQQ7n/2D8XEetIvFmSOl7vQXf5G5hvsgqqDnpGQD5EwwN/iiMISgkeMJ+i+IfuBSMYDwqFTtPAJ4GrSz/0BwAoDDD9CmoxoOO8OAN7JWbgfKKE/GuCwAphe0jPLEvar9GFj2V8WB2Mc4WA0X749lD2tVlU/YUYrR7uG7jKZSjvAM+vxrVzLhwbbpaH9WgN4TW4SM7286+Dj8HDhokQB53/gOXHLQCkjWegXkPu6Is8LXR8GWEhpUeNgFNEpDQqhC9yF96RdCnoIednieyznjDQWYGk6C8nMire5lxH4FfEC/snBAV0HpGgzyaQVwGBRCRWNcXBM1mvqqFKTZ4m0UynAtfVQP2NwECU13FtvnVF4UGD8KQpKgGn2B/6yGDw4inH1eHI47kHvE3q0QpzOg8ek0IovQ5X4AGTwcchZGRgBqwCmJ5ZClQo56sDB3zhUmW1BtFPXn15lZMnHK//QMMfvEtEE8P2WHSd2Chhg4jbsAh1FFQdHZHYTwFFEQ1Ywllz2vqq7jGClEMAUa6bg9YaDYOtNFFKz8Jhc6hrAK/I6e6jYQw4Qc4t5+R7XJzzZcZib9eQhmdXlpfQyuV9IIc9VZaMpq3uSReDslZGYLMLGQVv8GTS5DX+7OAAYR1NE751pfEoAhzUOjmWg4J4vb8VddEBv5jTrKF4Hm4dM7SE4sQQ43chAhx+gkwpPQLQ+OH4e42qDoNAvrlk9FPJytjL5i9sj1XTwKpbzVtYxdb6jaQAciKJdcNULFe9mk69D6SgnBLCc4wSnYqu+EPurkCL6Af3gfx6CUkRz4yAv5yPL315s4jKPh7oLbT4wjPXhAKdpKn34pEh5LXadsQLC7B1uTuWDP5qlK2XNAxR2QZrKQAeYtoVs/b1Ls/x7sPUfHz/wyDkVXgruWFHNLKXZsXnq8QSlXoGHJvJT/h0CB69kebCtnGp/m+X/CzjIDWcGqxo/yShkhYGRbymfSvVSOQG3fhUqPIRpACK4CILyIdymwZr2Xad4Jql4vfL66LHK0uAjTazfnLIjqv89+vz4r3jUlaX3sih7khvz8vbi8S7le/XgGHKLw/z1o7+3HLxy9BrQy/6cgpaPBfjtl1RrKlXbSTx6JY7tVr4CfkiLokzZeP/dfLqHeH3jWoOWV1IuPynR7CST7v4dUa5A/PsyjptBLQMYTNUfDSl3+k3UKoC94HDwWUetAlihDIMO4ENqF8DgGD90AB9QuwDupUFwmhWKn0btArijJ9QB3HLqAG45dQC3nDqAW04dwC2nDuCWUwdwy6kDuOXUcIA/ag1d/Iv15NOkhgOsNHoiyu+gpgHcWxdFtaSveuuPyUgU9bO8m3ZVXskJUNMAXsch57kqnLe4833/6y9H2YupzvjfEZY/ffvEW3RIzQIYi1O23KaIaqoLymB9kKnnH3CWf7PzbhN8/dhMyfdQkwCmHNuDrkO9bQGUflWOJDP+2wvjs/gvfv8ypetXN/l9dFIA95IE/vWUnp+IBFhI4HtfCG4XJhR/JeB76jmWrMpear2ERkX6VZcz2DPJPGozdjwbl46aqPAP/8r3PT6LKmA/PAv8Avwl8A+Oh8nzsmeZwFect51QzzVuvYZ7JFRd6vsn1QT7pADexRmov0L+S5VVmCrbOA3iONzyTOdstcKiPj/NI2qDhk2ysBRml4VxSCnoSXof5/km8wuc+3xMkfphBjI4pTPQWaIU3wfYq0zFQoSIzoJyWlmHW9qGyhOwSZosVEAO96huIZFDp4sozIToFXkc7adNnwCdFMB0WzcF/INbD//wPVbqBgEWeKziHIwq/AxrkdIATBkq79yssXNGlmYx1jSlmzAAaH1vEyJmR2xhP87lGYLqLFt5Fmq1FcBZNvhLAGB81GibME2plHENpyqyTejXAe4lypbq3NKfcZbFb+w6/FvoJAHGW0q8RQCHHjZKz/gT/Exk1IFqxz1O0o2XRNEWROcWNlrF3HfQU9ZYqP9P8ZSZYBPmXgSYzhIgwNh+6Z8MpEih+PKXbPnX/JPCryhgx2yNLQrWKCZ+BrQ/tgIK/V1e8I/fIbbwOz60IPR9dEIAiz3A8R7glHoRAV8Jn0p4V1Eg1hE1Ayyozx2IaFEQM/XyvOdFReIr2w31i4Qbnh47yxGA+SxR1vOpfhg/Q4C35eO2Ab7FSeFiRxaUH4fC+xkQB0f+bpP7UhCk/gprBn9fy/7X6IQAVkkHI8A/JAfvHv6WKNI9W8c/1wRwgiXiJcAFcCviQY1efNHz6KnAb1QCmMvvvXKEPD9GBPBPBngH4ngrz5LhWUBQlzp4Kx83sUtRCa+wOiYNCjXJ4sT7mTEHf1WCeMsARyEczH97a+mPpxMCmIXn+qfUwfLWF1wBHOW9FdX5o4j276nAFO9+jwDecZ13jnWZSR7vypb5u4dUVhpv4niTlmf5H3MlARzQWdbyLMDBGfZAYh1cwCnYyOphI8WCeDS8j7FpOwIsRfQKRXOPOThLC/yxHcBHSGW++ZkSwDsC+O8K4LC3/pkr1HsQO5+hiEYLCCuygYMfMnBRetm9Tyyd5bJvjSd7zSn+brfzpOmzqowsPMMBwHEuPKok9pCr8VGLGeAUA1vJfd5DLeujgfU3iXhs/oBNIrLN2sen8SdWqSZ5J6KPE+tg5N4M+xTtCriFxcNWimgf+5p6GTWVjX742Bsw22FvaU+sYwRYZNSfaBXlYVnVvUmPnSWXjxCcBfDaor4tAU5A/BerHSriH5tglcbwjzg5W/nwc7CJXrDC1qMePnQevAqxiYC3ydHE21I1dwfwcQKVucmJg5OAWu1usKtZSk1d8dYD7ihogx52DkDWFOhCxeHGA9P2bxLR2L5G9P6Oyx5XLEUf0WoT0lmA9+GA/8RxtAPW47OQ94M1ioWgJtN4gk38FV7jqQFKdZVvsDHblgKa+Bm6YtQ8EZ+Dn9gewo/jTkQfJR8U2A4L8JMiSHfbIEXeyLDrSvINS/1XaRbg+hF2DqBmcusgW6+DVVIU+DbJ+cZ6qSevaxWsnzvLGs+SBR6cZVedpSiwJyGcnAIkfpGluwKbD8BX2wDb0gp+lXL5xC7FDahe3y+CbU/xqOEA/LyOg/8NiYM/9Td+2vODVS/f+KLYwn3vbTP/lycDHItvn/7daxLAR4mN5J8ZBrfirAdcnEY/8yz+1QA39T41HmAk0SsewnVGnctAW+YFTmL47B91ItQKgIG24CtxD6UEG/ac5oStz6C2AHxAbbymf0utBLijPXUAt5w6gFtOHcAtpw7gllMHcMupA7jl1AHccuoAbjl1ALecOoBbTh3ALacO4JZTB3DLqQO45dQB3HLqAG45dQC3nDqAW04dwC2nDuCWUwdwy6kDuOXUAdxy6gBuOXUAt5w6gFtOHcAtpw7gllMHcMupA7jl1AHccuoAbjl1ALecOoBbTh3ALacO4JZTB3DLqQO45dQB3HLqAG45dQC3nDqAW04dwC2nDuCWUwdwy6kDuOXU+z9JIxi9hXxEJgAAAABJRU5ErkJggg==" alt="CardioPluz">
+    <div class="titleblock">
+      <span class="eyebrow">Personalized Heart Care</span>
+      <h1>เครื่องสร้างแผนดูแลหัวใจเฉพาะบุคคล</h1>
+      <p>กรอกข้อมูลผู้ป่วยและเลือกภาวะที่เป็น ระบบจะคำนวณเป้าหมายและออกรายงานพร้อมพิมพ์</p>
+    </div>
+  </div>
+
+  <div class="stack no-print">
+    <!-- ===== STEP 1: patient data ===== -->
+    <div class="card">
+      <div class="card-head"><div class="step">1</div>
+        <div><h2>ข้อมูลผู้ป่วย</h2><p>ใช้คำนวณ BMI · พลังงาน · โปรตีน · โซนหัวใจ</p></div>
+      </div>
+      <div class="card-body">
+        <div class="grid g3">
+          <div class="field" style="grid-column:span 2">
+            <label>ชื่อ–นามสกุล</label>
+            <input type="text" id="name" placeholder="เช่น คุณสมหญิง ใจดี">
+          </div>
+          <div class="field">
+            <label>เพศ</label>
+            <select id="sex"><option value="female">หญิง</option><option value="male">ชาย</option></select>
+          </div>
+          <div class="field"><label>อายุ <span class="unit">(ปี)</span></label><input type="number" id="age" min="1" max="120" placeholder="60"></div>
+          <div class="field"><label>น้ำหนัก <span class="unit">(กก.)</span></label><input type="number" id="wt" min="20" max="250" step="0.1" placeholder="65"></div>
+          <div class="field"><label>ส่วนสูง <span class="unit">(ซม.)</span></label><input type="number" id="ht" min="100" max="220" placeholder="160"></div>
+          <div class="field">
+            <label>ความดันโลหิตที่วัดได้ <span class="unit">(SBP/DBP มม.ปรอท)</span></label>
+            <div class="bp-row"><input type="number" id="sbp" placeholder="128"><span>/</span><input type="number" id="dbp" placeholder="78"></div>
+          </div>
+          <div class="field"><label>ชีพจรขณะพัก <span class="unit">(ครั้ง/นาที · ไม่บังคับ)</span></label><input type="number" id="rhr" min="30" max="160" placeholder="72"></div>
+          <div class="field">
+            <label>ระดับกิจกรรมประจำวัน</label>
+            <select id="act">
+              <option value="1.2">นั่งทำงาน/ไม่ค่อยขยับ</option>
+              <option value="1.375" selected>ออกแรงเบา (1–3 วัน/สัปดาห์)</option>
+              <option value="1.55">ปานกลาง (3–5 วัน/สัปดาห์)</option>
+              <option value="1.725">หนัก (6–7 วัน/สัปดาห์)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>สูบบุหรี่</label>
+            <select id="smoke"><option value="no">ไม่สูบ</option><option value="yes">สูบ / เพิ่งเลิก</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STEP 2: conditions ===== -->
+    <div class="card">
+      <div class="card-head"><div class="step">2</div>
+        <div><h2>ภาวะ/โรคประจำตัว</h2><p>เลือกได้หลายข้อ — ระบบจะรวมคำแนะนำให้แบบไม่ซ้ำซ้อน</p></div>
+      </div>
+      <div class="card-body">
+        <div class="cond-grid" id="condGrid">
+
+          <label class="cond" data-k="acs">
+            <div class="top"><input type="checkbox"><div><div class="nm">หลอดเลือดหัวใจตีบเฉียบพลัน</div><div class="sub">ACS · NSTEMI / STEMI (ช่วงฟื้นฟู)</div></div></div>
+            <div class="extra">
+              <label><input type="radio" name="acsPhase" value="early" checked> ช่วง 1–4 สัปดาห์แรก</label>
+              <label><input type="radio" name="acsPhase" value="late"> หลัง 4–6 สัปดาห์ขึ้นไป</label>
+            </div>
+          </label>
+
+          <label class="cond" data-k="ccs">
+            <div class="top"><input type="checkbox"><div><div class="nm">หลอดเลือดหัวใจตีบเรื้อรัง</div><div class="sub">CCS · Chronic Coronary Syndrome</div></div></div>
+          </label>
+
+          <label class="cond" data-k="hf">
+            <div class="top"><input type="checkbox"><div><div class="nm">ภาวะหัวใจล้มเหลว</div><div class="sub">HFrEF / HFmrEF / HFpEF</div></div></div>
+          </label>
+
+          <label class="cond" data-k="af">
+            <div class="top"><input type="checkbox"><div><div class="nm">หัวใจเต้นผิดจังหวะ</div><div class="sub">AF / SVT</div></div></div>
+            <div class="extra">
+              <label><input type="checkbox" name="warfarin"> ทานยา Warfarin</label>
+              <label><input type="checkbox" name="noac"> ทานยาต้านการแข็งตัวกลุ่มใหม่ (NOAC/DOAC)</label>
+            </div>
+          </label>
+
+          <label class="cond" data-k="vhd">
+            <div class="top"><input type="checkbox"><div><div class="nm">โรคลิ้นหัวใจ</div><div class="sub">Valvular Heart Disease</div></div></div>
+            <div class="extra">
+              <label><input type="radio" name="vhdStatus" value="preop" checked> ยังไม่ได้ผ่าตัด</label>
+              <label style="margin-left:24px"><input type="checkbox" name="severeAS"> เป็น Severe AS</label>
+              <label><input type="radio" name="vhdStatus" value="post_early"> ผ่าตัดแล้ว ≤ 8 สัปดาห์</label>
+              <label><input type="radio" name="vhdStatus" value="post_late"> ผ่าตัดแล้ว &gt; 8 สัปดาห์</label>
+            </div>
+          </label>
+
+          <label class="cond" data-k="dm">
+            <div class="top"><input type="checkbox"><div><div class="nm">เบาหวาน</div><div class="sub">Diabetes Mellitus</div></div></div>
+          </label>
+
+          <label class="cond" data-k="ht">
+            <div class="top"><input type="checkbox"><div><div class="nm">ความดันโลหิตสูง</div><div class="sub">Hypertension</div></div></div>
+          </label>
+
+          <label class="cond" data-k="dlp">
+            <div class="top"><input type="checkbox"><div><div class="nm">ไขมันในเลือดผิดปกติ</div><div class="sub">Dyslipidemia</div></div></div>
+          </label>
+
+          <label class="cond" data-k="ob">
+            <div class="top"><input type="checkbox"><div><div class="nm">ภาวะน้ำหนักเกิน / อ้วน</div><div class="sub">Overweight / Obesity</div></div></div>
+          </label>
+
+          <label class="cond" data-k="ckd">
+            <div class="top"><input type="checkbox"><div><div class="nm">โรคไตเรื้อรัง</div><div class="sub">CKD (ยังไม่ฟอกไต)</div></div></div>
+          </label>
+
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="genBtn">⊕ สร้างรายงานแผนการดูแล</button>
+          <button class="btn btn-ghost" id="resetBtn">ล้างข้อมูล</button>
+        </div>
+        <div class="alert" id="alertBox"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REPORT ===== -->
+  <div id="report">
+    <div class="print-bar no-print">
+      <button class="btn btn-ghost" id="editBtn">← กลับไปแก้ไข</button>
+      <button class="btn btn-primary" id="printBtn">🖨 พิมพ์ / บันทึก PDF</button>
+    </div>
+    <div class="report-sheet" id="sheet"></div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   CardioPluz · personalized care-plan engine
+   อ้างอิงแนวทาง ACC/AHA, ESC, ADA และแนวทางไทยเฉพาะโรค
+   ========================================================= */
+
+const $ = s => document.querySelector(s);
+const conds = {};                 // selected conditions -> true
+document.querySelectorAll('.cond').forEach(c=>{
+  const cb = c.querySelector('input[type=checkbox]');
+  const extra = c.querySelector('.extra');
+  cb.addEventListener('change',()=>{
+    c.classList.toggle('on',cb.checked);
+    if(extra) extra.classList.toggle('show',cb.checked);
+  });
+  // prevent label toggling checkbox twice when clicking inner controls
+  c.addEventListener('click',e=>{ if(e.target.closest('.extra') && e.target!==cb) e.stopPropagation(); });
+});
+
+function round(n,step=1){return Math.round(n/step)*step;}
+function pretty(n){return n.toLocaleString('en-US');}
+
+function readForm(){
+  const get=id=>$(id).value.trim();
+  const num=id=>parseFloat($(id).value);
+  const p={
+    name:get('#name')||'ผู้รับบริการ',
+    sex:$('#sex').value,
+    age:num('#age'), wt:num('#wt'), ht:num('#ht'),
+    sbp:num('#sbp'), dbp:num('#dbp'), rhr:num('#rhr'),
+    act:parseFloat($('#act').value), smoke:$('#smoke').value
+  };
+  const c={};
+  document.querySelectorAll('.cond').forEach(el=>{
+    if(el.querySelector('input[type=checkbox]').checked) c[el.dataset.k]=true;
+  });
+  c.acsPhase = document.querySelector('input[name=acsPhase]:checked')?.value;
+  c.vhdStatus = document.querySelector('input[name=vhdStatus]:checked')?.value;
+  c.severeAS = document.querySelector('input[name=severeAS]')?.checked;
+  c.warfarin = document.querySelector('input[name=warfarin]')?.checked;
+  c.noac = document.querySelector('input[name=noac]')?.checked;
+  return {p,c};
+}
+
+function validate(p){
+  const e=[];
+  if(!p.age||p.age<1) e.push('อายุ');
+  if(!p.wt||p.wt<20) e.push('น้ำหนัก');
+  if(!p.ht||p.ht<100) e.push('ส่วนสูง');
+  if(!p.sbp||!p.dbp) e.push('ความดันโลหิต');
+  return e;
+}
+
+/* ---------- core engine ---------- */
+function buildPlan(p,c){
+  const hm=p.ht/100, bmi=p.wt/(hm*hm);
+  const idealLo=18.5*hm*hm, idealHi=22.9*hm*hm, idealTarget=22*hm*hm;
+  let bmiStatus;
+  if(bmi<18.5)bmiStatus='น้ำหนักน้อย';
+  else if(bmi<23)bmiStatus='ปกติ (สมส่วน)';
+  else if(bmi<25)bmiStatus='น้ำหนักเกิน';
+  else if(bmi<30)bmiStatus='อ้วน ระดับ 1';
+  else bmiStatus='อ้วน ระดับ 2';
+
+  const has=k=>!!c[k];
+  const acsEarly = has('acs') && c.acsPhase==='early';
+  const acsLate  = has('acs') && c.acsPhase==='late';
+  const vhdPostEarly = has('vhd') && c.vhdStatus==='post_early';
+  const vhdPostLate  = has('vhd') && c.vhdStatus==='post_late';
+  const vhdPreop = has('vhd') && c.vhdStatus==='preop';
+  const metabolic = has('dm')||has('ob')||has('dlp');
+  const established = has('acs')||has('ccs')||has('hf')||has('vhd');
+  const weightLoss = has('ob')||bmi>=25;
+
+  /* ---- energy ---- */
+  const bmr = p.sex==='male'
+    ? 10*p.wt+6.25*p.ht-5*p.age+5
+    : 10*p.wt+6.25*p.ht-5*p.age-161;
+  const tdee = bmr*p.act;
+  const floor = p.sex==='male'?1500:1200;
+  let kcalTarget = tdee, kcalNote='พลังงานเพื่อคงน้ำหนัก';
+  if(weightLoss){ kcalTarget=Math.max(tdee-500,floor); kcalNote='ลดพลังงาน ~500 kcal/วัน เพื่อลดน้ำหนัก'; }
+  else if(bmi<18.5){ kcalTarget=tdee+300; kcalNote='เพิ่มพลังงานเพื่อเพิ่มน้ำหนัก'; }
+
+  /* ---- protein ---- */
+  const obeseBasis = bmi>=23;
+  const basisWt = obeseBasis ? idealTarget : p.wt;
+  let pLo=1.0,pHi=1.2, pNote='', pBasisTxt = obeseBasis?'คำนวณจากน้ำหนักที่เหมาะสม':'คำนวณจากน้ำหนักตัว';
+  const bump=(lo,hi)=>{pLo=Math.max(pLo,lo);pHi=Math.max(pHi,hi);};
+  if(has('hf')) bump(1.1,1.4);
+  if(vhdPostEarly) bump(1.2,1.5);
+  if(metabolic) bump(1.2,1.5);
+  if(has('acs')||has('ccs')) bump(1.0,1.2);
+  let proteinG=[round(pLo*basisWt),round(pHi*basisWt)];
+  if(has('ckd')){
+    pLo=0.6;pHi=0.8;
+    proteinG=[round(0.6*p.wt),round(0.8*p.wt)];
+    pBasisTxt='คำนวณจากน้ำหนักตัว (ปรับลดเพราะ CKD)';
+    pNote='เนื่องจากมีโรคไตเรื้อรัง จึงจำกัดโปรตีนเพื่อชะลอความเสื่อมของไต — ควรปรับตามระยะ CKD และค่า eGFR โดยแพทย์/นักกำหนดอาหาร';
+  }
+
+  /* ---- sodium ---- */
+  let naCap=2000;
+  if(has('ht')) naCap=1500;
+  const naTxt = naCap===1500 ? '< 1,500 มก./วัน (เข้มงวด)' : '1,500 – 2,000 มก./วัน';
+
+  /* ---- fluid ---- */
+  const fluid = has('hf') ? '1.5 – 2.0 ลิตร/วัน' : null;
+
+  /* ---- HR zone ---- */
+  const maxHR=220-p.age;
+  let lo=60,hi=80;            // default moderate ceiling
+  const cap=(a,b)=>{lo=Math.min(lo,a);hi=Math.min(hi,b);};
+  if(has('ccs')) cap(60,80);
+  if(metabolic) cap(60,70);
+  if(has('ht')) cap(60,75);
+  if(has('af')) cap(60,70);
+  if(vhdPreop) cap(60,80);
+  if(vhdPreop && c.severeAS) cap(50,60);
+  if(vhdPostLate) cap(60,75);
+  if(vhdPostEarly) cap(50,60);
+  if(has('hf')) cap(50,70);
+  if(acsLate) cap(60,70);
+  if(acsEarly) cap(50,60);
+  if(lo>=hi) lo=hi-10;
+  const hrLo=round(maxHR*lo/100), hrHi=round(maxHR*hi/100);
+  let zoneLabel;
+  if(hi<=60) zoneLabel='Zone 1 · เบามาก';
+  else if(lo>=60&&hi<=70) zoneLabel='Zone 2 · ปานกลาง';
+  else if(hi<=70) zoneLabel='Zone 1–2 · เบา–ปานกลาง';
+  else if(hi<=80) zoneLabel='Zone 2–3 · ปานกลาง–ค่อนข้างหนัก';
+  else zoneLabel='Zone 2–3';
+  let hrAlt = (acsEarly && p.rhr) ? `หรือไม่เกินชีพจรพัก + 20 ≈ ${p.rhr+20} ครั้ง/นาที` : '';
+
+  /* ---- HBPM target ---- */
+  let bpTarget, bpNote='';
+  const highRiskBP = has('dm')||has('ckd')||established||has('af');
+  if(p.age>=80){ bpTarget='< 140 / 90'; bpNote='ผู้สูงอายุ ≥ 80 ปี ปรับเป้าหมายตามสภาพร่างกายและความเสี่ยงล้ม'; }
+  else if(highRiskBP){ bpTarget='< 130 / 80'; bpNote='กลุ่มความเสี่ยงสูง/มีโรคหัวใจหรือเบาหวาน'; }
+  else { bpTarget='< 135 / 85'; bpNote='หากทนได้ดี พิจารณาเข้าใกล้ 130/80'; }
+
+  /* ---- Nutrition list ---- */
+  const nut=[];
+  nut.push(`<b>โปรตีน</b> ${proteinG[0]}–${proteinG[1]} กรัม/วัน (${pLo.toFixed(1)}–${pHi.toFixed(1)} ก./กก. · ${pBasisTxt})`);
+  nut.push(`<b>โซเดียม</b> ${naTxt} (เกลือ ≈ 1 ช้อนชา หรือน้ำปลา ≤ 3–4 ช้อนชา) — งดน้ำซุปก้อน/ผงปรุงรส อาหารแปรรูป บะหมี่กึ่งสำเร็จรูป ของหมักดอง</b>`);
+  if(fluid) nut.push(`<b>จำกัดน้ำดื่มรวม</b> ${fluid} (รวมน้ำซุป/นม) — ควรตวงปริมาณ`);
+  nut.push(`<b>คาร์โบไฮเดรต</b> เน้นข้าวกล้อง/ข้าวซ้อมมือ ข้าวโอ๊ต ขนมปังโฮลวีต แทนข้าวขาว/แป้งขัดสี · ลดข้าวเหนียว ขนมหวาน ของทอดแป้ง`);
+
+  // disease-specific (plain Thai, no jargon)
+  if(has('dm')) nut.push(`<b>เบาหวาน</b> งดน้ำตาลทรายและน้ำเชื่อม · จัดจานสูตร 2:1:1 (ผักครึ่งจาน · ข้าว/แป้ง ¼ จาน · เนื้อสัตว์ไม่ติดมัน ¼ จาน) · เลือกผลไม้หวานน้อยทีละน้อย`);
+  if(has('ht')){
+    if(has('ckd')) nut.push(`<b>ความดันสูง (มีโรคไตร่วม)</b> ลดเค็มจัดและของแปรรูปอย่างเข้มงวด เน้นปรุงเอง · กินผัก-ผลไม้แต่<b>เลือกชนิดโพแทสเซียมต่ำ</b>ตามคำแนะนำแพทย์ (ดูหัวข้อโรคไต)`);
+    else nut.push(`<b>ความดันสูง</b> เน้นกินผัก ผลไม้หวานน้อย ธัญพืชไม่ขัดสี ปลา และนม/โยเกิร์ตไขมันต่ำ · ลดเนื้อแดง ของทอด อาหารแปรรูปและอาหารเค็มจัด`);
+  }
+  if(has('dlp')) nut.push(`<b>ไขมันในเลือดสูง</b> เลี่ยงของทอด หนังสัตว์ เครื่องในและไขมันสัตว์ · ถ้าไตรกลีเซอไรด์สูง ให้งดแอลกอฮอล์ น้ำหวาน และของหวานเป็นพิเศษ`);
+  if(has('af')){
+    nut.push(`<b>หัวใจเต้นผิดจังหวะ</b> งดแอลกอฮอล์ (กระตุ้น AF โดยตรง) · งดชาหมัก/เครื่องดื่มชูกำลัง · จำกัดคาเฟอีน (ชา/กาแฟ) ไม่เกิน 1–2 แก้ว/วัน`);
+    if(c.warfarin) nut.push(`<b>ผู้ทาน Warfarin</b> กินผักใบเขียว (วิตามิน K เช่น คะน้า ตำลึง บรอกโคลี) ในปริมาณ<b>คงที่ทุกวัน</b> ห้ามงดหรือกินมากผิดปกติเป็นพักๆ`);
+    if(c.noac) nut.push(`<b>ผู้ทานยากลุ่ม NOAC/DOAC</b> กินผักใบเขียวได้ตามปกติ (ไม่ต้องคุมวิตามิน K) แต่ต้องกินยาให้ตรงเวลาทุกวัน ห้ามลืม/หยุดเอง`);
+  }
+  if(has('ckd')) nut.push(`<b>โรคไตเรื้อรัง</b> จำกัดอาหารโพแทสเซียมสูง (กล้วย ส้ม มะละกอ มะเขือเทศ ฟักทอง มันฝรั่ง ทุเรียน) และฟอสฟอรัสสูง (เครื่องในสัตว์ ไข่แดง นม ถั่วเมล็ดแห้ง น้ำอัดลมสีเข้ม) · ลวกผักทิ้งน้ำก่อนปรุงเพื่อลดโพแทสเซียม · เลี่ยงยาแก้ปวด NSAIDs`);
+  if(weightLoss) nut.push(`<b>ควบคุมน้ำหนัก</b> สร้างพลังงานติดลบราว 500 kcal/วัน · เพิ่มโปรตีนและผักให้อิ่มนาน · กินช้าๆ เคี้ยวให้ละเอียด`);
+
+  /* ---- Detailed food reference ---- */
+  const proteinFoods=[
+    ['ไข่ไก่ทั้งฟอง 1 ฟอง','7 ก.'],
+    ['ไข่ขาว 1 ฟอง','3.5 ก.'],
+    ['อกไก่ลอกหนัง สุก ~100 ก. (1 ฝ่ามือ)','30 ก.'],
+    ['เนื้อปลา เช่น ปลาทู/ปลานิล/แซลมอน ~100 ก.','20 ก.'],
+    ['หมู/เนื้อไม่ติดมัน สุก ~100 ก.','26 ก.'],
+    ['กุ้งสุก ~100 ก.','20 ก.'],
+    ['เต้าหู้แข็ง ครึ่งก้อน (~80 ก.)','7 ก.'],
+    ['นมจืดไขมันต่ำ 1 กล่อง (200 มล.)','7 ก.'],
+    ['นมถั่วเหลืองไม่หวาน 1 แก้ว (240 มล.)','7 ก.'],
+    ['ถั่วเหลืองต้ม ครึ่งถ้วย','14 ก.']
+  ];
+  const veg = has('ckd')
+    ? ['แตงกวา','กะหล่ำปลี','ดอกกะหล่ำ','ฟักเขียว','มะระ','ถั่วงอก','ผักกาดขาว (ลวกทิ้งน้ำ)','พริกหวาน','หอมใหญ่']
+    : ['ตำลึง','คะน้า','บรอกโคลี','กะหล่ำปลี','ดอกกะหล่ำ','แตงกวา','ถั่วฝักยาว','ฟักเขียว','มะระ','ผักกาดขาว','มะเขือยาว','เห็ดต่างๆ','พริกหวาน','ผักบุ้ง','ผักกาดหอม'];
+  const fruitOk = has('ckd')
+    ? ['แอปเปิล','ชมพู่','สับปะรด (พอประมาณ)','แตงโม (พอประมาณ)','องุ่นเขียว (พอประมาณ)']
+    : ['ฝรั่ง','แอปเปิล','ชมพู่','แก้วมังกร','ส้มโอ','สาลี่','สตรอว์เบอร์รี/เบอร์รี','แคนตาลูป (พอประมาณ)'];
+  const fruitLimit = ['ทุเรียน','มะม่วงสุก','ลำไย','ลิ้นจี่','องุ่น (เยอะ)','ขนุน','น้อยหน่า','กล้วยหอมสุกจัด'];
+  const oilOk = ['น้ำมันรำข้าว','น้ำมันมะกอก','น้ำมันคาโนลา','น้ำมันถั่วเหลือง','น้ำมันดอกทานตะวัน','น้ำมันข้าวโพด'];
+  const oilAvoid = ['กะทิ','น้ำมันมะพร้าว','น้ำมันปาล์ม','น้ำมันหมู/ไขสัตว์','เนย/มาการีน','ครีมเทียม','ของทอดน้ำมันซ้ำ'];
+  const oilNote = 'เน้นวิธีปรุงแบบต้ม นึ่ง ย่าง อบ หรือผัดน้ำมันน้อย เลี่ยงของทอด · ใช้น้ำมันรวม ≤ 4–6 ช้อนชา/วัน · งดไขมันทรานส์ 100% (เบเกอรี ครีมเทียม ของทอดซ้ำ) · น้ำมันถั่วเหลือง/ดอกทานตะวันเหมาะกับผัดไฟกลาง ส่วนการทอดให้ใช้น้ำมันรำข้าว';
+
+  // sugary drinks — emphasized for everyone
+  const sugaryNote = 'น้ำอัดลม · ชาเย็น/กาแฟเย็น/โอเลี้ยง · ชานมไข่มุก · น้ำหวาน/น้ำแดง · น้ำผลไม้กล่อง · นมเปรี้ยว · เครื่องดื่มชูกำลัง ล้วนเป็นแหล่ง<b>น้ำตาลซ่อนเร้น</b>ที่ทำให้น้ำหนัก น้ำตาล และไตรกลีเซอไรด์สูง — เปลี่ยนมาดื่ม<b>น้ำเปล่า</b> หรือชา/กาแฟไม่ใส่น้ำตาล หากติดหวานให้ค่อยๆ ลดระดับความหวานลง';
+
+  // potassium salt substitute advice
+  let saltSub=null;
+  if(has('ckd')||has('hf'))
+    saltSub={kind:'avoid', text:'<b>ไม่แนะนำให้ใช้เกลือโพแทสเซียม (เกลือสูตรลดโซเดียม)</b> ในผู้ป่วยโรคไตหรือหัวใจล้มเหลว เพราะเสี่ยงโพแทสเซียมในเลือดสูงจนหัวใจเต้นผิดจังหวะอันตราย — ใช้วิธีลดเกลือ/น้ำปลาและปรุงเองด้วยสมุนไพร (ตะไคร้ ข่า มะนาว พริกไทย) แทน'};
+  else if(has('ht'))
+    saltSub={kind:'ok', text:'เกลือโพแทสเซียม (เกลือสูตรลดโซเดียม) อาจช่วยลดความดันได้ และใช้แทนเกลือปกติได้ในบางราย <b>แต่ควรปรึกษาแพทย์ก่อน</b> โดยเฉพาะถ้าทานยาความดันกลุ่ม ACEI/ARB หรือยาขับปัสสาวะชนิดเก็บโพแทสเซียม เพราะอาจทำให้โพแทสเซียมสูงเกินไป'};
+
+  /* ---- Exercise ---- */
+  let aerobic;
+  if(acsEarly) aerobic='ช่วงนี้เน้นกิจวัตรเบาในบ้านและเดินช้าๆ ตามที่ร่างกายทนได้ ยังไม่ออกกำลังกายเป็นรูปแบบ';
+  else if(vhdPostEarly) aerobic='เดินเบาๆ เพิ่มระยะทีละน้อย หลีกเลี่ยงกิจกรรมที่ใช้แรงแขน/อกในช่วง 6–8 สัปดาห์แรก';
+  else if(has('hf')) aerobic='เริ่มออกกำลังเมื่ออาการคงที่ เดิน/ปั่นเบาๆ แล้วค่อยๆ เพิ่มเวลา';
+  else if(acsLate) aerobic='เดินเร็วเบาๆ เพิ่มขึ้นทีละน้อยตามที่ทนได้';
+  else if(metabolic) aerobic='คาร์ดิโอ เช่น เดินเร็ว/ว่ายน้ำ 45–60 นาที อย่างน้อย 5 วัน/สัปดาห์';
+  else if(has('ccs')||has('vhd')||has('af')||has('ht')) aerobic='แอโรบิก เดินเร็ว/ปั่นจักรยาน/ว่ายน้ำ 30–60 นาที/วัน (รวม 150–300 นาที/สัปดาห์)';
+  else aerobic='แอโรบิกระดับปานกลาง รวม 150–300 นาที/สัปดาห์';
+
+  const ex=[];
+  ex.push(`<b>โซนหัวใจเป้าหมาย</b> ${hrLo}–${hrHi} ครั้ง/นาที (${zoneLabel}) ${hrAlt?'· '+hrAlt:''}`);
+  ex.push(`<b>แอโรบิก</b> ${aerobic}`);
+  const resistRestricted = acsEarly||vhdPostEarly;
+  if(resistRestricted){
+    const lim = vhdPostEarly?'2–3 กก.':'2–5 กก.';
+    ex.push(`<b>เวทเทรนนิ่ง</b> งดในช่วงนี้ · ห้ามยกของหนัก > ${lim}`);
+  } else if(metabolic){
+    ex.push(`<b>เวทเทรนนิ่ง</b> 2–3 วัน/สัปดาห์ เพื่อเพิ่มมวลกล้ามเนื้อและลดภาวะดื้ออินซูลิน`);
+  } else if(has('ccs')||has('vhd')||has('af')){
+    ex.push(`<b>เวทเทรนนิ่ง</b> น้ำหนักเบา–ปานกลาง 2 วัน/สัปดาห์`);
+  } else {
+    ex.push(`<b>เวทเทรนนิ่ง</b> 2 วัน/สัปดาห์ ทุกกลุ่มกล้ามเนื้อหลัก`);
+  }
+  if(has('hf')) ex.push(`<b>ข้อควรระวัง</b> ห้ามกลั้นหายใจเบ่ง (Valsalva) และงดยกน้ำหนักหนัก`);
+  if(has('af')) ex.push(`<b>ข้อควรระวัง</b> หลีกเลี่ยงกีฬาทนทานสุดขั้ว (อัลตร้ามาราธอน) ที่ดันชีพจรเข้า Zone 4–5 นานๆ`);
+  if(vhdPreop && c.severeAS) ex.push(`<b>Severe AS</b> ห้ามออกกำลังกายหนักหรือออกแรงเบ่ง`);
+  if(vhdPostEarly) ex.push(`<b>Sternal precautions</b> งดขับรถ งดบิดเอี้ยวตัวแรงๆ ช่วง 6–8 สัปดาห์แรก`);
+
+  /* ---- Medication & lifestyle (deduped) ---- */
+  const med=new Set();
+  if(has('acs')) med.add('ทานยาต้านเกล็ดเลือด (DAPT) และยาลดไขมัน (Statin) สม่ำเสมอ — ห้ามหยุดยาเอง');
+  if(has('ccs')) med.add('พกยาอมใต้ลิ้น (Nitroglycerin) ติดตัวเสมอ และเรียนรู้วิธีใช้ที่ถูกต้อง');
+  if(has('hf')) med.add('ชั่งน้ำหนักทุกเช้าหลังตื่น–ปัสสาวะ · หากขึ้น > 1 กก./วัน หรือ > 2 กก./3 วัน รีบพบแพทย์');
+  if(has('af')){
+    med.add('สังเกตอาการหน้ามืด/ใจสั่น/วูบ และสัญญาณหลอดเลือดสมอง (F-A-S-T)');
+    med.add('ประเมินภาวะหยุดหายใจขณะหลับ (OSA) หากนอนกรนรุนแรง');
+    if(c.warfarin) med.add('ทาน Warfarin ตรงเวลา · ตรวจ INR สม่ำเสมอ · ระวังอาหาร/ยาที่มีผลต่อ INR');
+    if(c.noac) med.add('ทานยากลุ่ม NOAC/DOAC ให้ตรงเวลาทุกวัน (ออกฤทธิ์สั้น หากลืมยาเสี่ยงลิ่มเลือดทันที) · แจ้งแพทย์/ทันตแพทย์ก่อนผ่าตัดหรือทำหัตถการ · เลี่ยงยาแก้ปวด NSAIDs และสมุนไพรที่ทำให้เลือดออกง่าย');
+  }
+  if(has('vhd')){
+    med.add('ดูแลสุขภาพช่องปาก แปรงฟันสะอาด พบทันตแพทย์ทุก 6 เดือน');
+    med.add('แจ้งแพทย์/ทันตแพทย์ทุกครั้งก่อนทำฟัน เพื่อรับยาปฏิชีวนะป้องกันลิ้นหัวใจติดเชื้อ (IE)');
+  }
+  if(has('dm')){
+    med.add('ตรวจเช็กเท้าทุกวัน และตรวจตา/จอประสาทตาประจำปี');
+    med.add('ตรวจการทำงานของไตและไข่ขาวในปัสสาวะประจำปี');
+  }
+  if(has('ht')) med.add('วัดความดันที่บ้าน (HBPM) เช้า–เย็น และจดบันทึกมาให้แพทย์');
+  if(has('dlp')) med.add('ทานยาลดไขมันสม่ำเสมอ และตรวจระดับไขมันตามนัด');
+  if(has('ob')) med.add('ตั้งเป้าลดน้ำหนัก 5–10% ภายใน 3–6 เดือน อย่างค่อยเป็นค่อยไป');
+  if(has('ckd')) med.add('หลีกเลี่ยงยาแก้ปวด NSAIDs · ตรวจ eGFR และโพแทสเซียมตามนัด');
+  if(p.smoke==='yes'||has('acs')) med.add('งดสูบบุหรี่ 100% และหลีกเลี่ยงควันบุหรี่มือสอง');
+
+  /* ---- Vaccines ---- */
+  const vacc=[];
+  vacc.push(['💉','ไข้หวัดใหญ่ (Influenza)','ฉีดทุกปี — ลดการกำเริบของโรคหัวใจ']);
+  if(established||has('dm')||has('ckd')||p.age>=65)
+    vacc.push(['🫁','ปอดอักเสบ (Pneumococcal · PCV20)','สำหรับผู้มีโรคหัวใจเรื้อรัง/เบาหวาน/ไต หรืออายุ ≥ 65 ปี']);
+  if(has('acs')||has('hf')||p.age>=60)
+    vacc.push(['🦠','COVID-19','ตามเข็มกระตุ้นที่แนะนำในกลุ่มเสี่ยง']);
+  if(p.age>=75 || (p.age>=60 && (has('hf')||has('ccs')||has('acs')||has('dm')||has('ckd'))))
+    vacc.push(['🌬️','RSV','แนะนำในผู้สูงอายุ ≥ 60–75 ปี ที่มีโรคหัวใจ/ปอด/เบาหวาน']);
+  vacc.push(['🩹','คอตีบ-บาดทะยัก-ไอกรน (Tdap/Td)', has('dm')?'กระตุ้นทุก 10 ปี · สำคัญมากหากมีแผลเบาหวาน':'กระตุ้นทุก 10 ปี']);
+  if(p.age>=50) vacc.push(['🎯','งูสวัด (Shingrix)','แนะนำในผู้อายุ ≥ 50 ปี']);
+
+  /* ---- Conflict flags ---- */
+  const flags=[];
+  if(has('ckd') && (has('hf')||vhdPostEarly||metabolic))
+    flags.push('มีทั้งภาวะที่ต้องการโปรตีนสูงและโรคไตเรื้อรัง — แผนนี้เลือก<b>จำกัดโปรตีนเพื่อถนอมไตเป็นหลัก</b> ควรให้แพทย์/นักกำหนดอาหารปรับตามค่า eGFR จริง');
+  if(has('ckd') && has('ht'))
+    flags.push('ความดันสูงร่วมกับโรคไต — เน้นลดโซเดียมแต่ <b>ไม่เพิ่มโพแทสเซียม</b> โดยไม่ปรึกษาแพทย์');
+
+  return {bmi,bmiStatus,idealLo,idealHi,proteinG,pLo,pHi,pBasisTxt,pNote,
+    tdee,kcalTarget,kcalNote,naTxt,fluid,hrLo,hrHi,zoneLabel,bpTarget,bpNote,
+    nut,proteinFoods,veg,fruitOk,fruitLimit,oilOk,oilAvoid,oilNote,sugaryNote,saltSub,
+    ex,med:[...med],vacc,flags,maxHR};
+}
+
+/* ---------- render ---------- */
+function condBadges(c){
+  const map={acs:'ACS (หลอดเลือดหัวใจเฉียบพลัน)',ccs:'CCS (หลอดเลือดหัวใจเรื้อรัง)',hf:'หัวใจล้มเหลว',
+    af:'หัวใจเต้นผิดจังหวะ',vhd:'โรคลิ้นหัวใจ',dm:'เบาหวาน',ht:'ความดันสูง',dlp:'ไขมันสูง',ob:'น้ำหนักเกิน/อ้วน',ckd:'โรคไตเรื้อรัง'};
+  return Object.keys(map).filter(k=>c[k]).map(k=>map[k]).join(' · ')||'การป้องกันโรคหัวใจทั่วไป';
+}
+
+function render(p,c,r){
+  const dateStr=new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+  const liList=arr=>arr.map(x=>`<li>${x}</li>`).join('');
+  const vaccHtml=r.vacc.map(v=>`<div class="v"><div class="vi">${v[0]}</div><div><div class="vt">${v[1]}</div><div class="vd">${v[2]}</div></div></div>`).join('');
+  const flagHtml=r.flags.map(f=>`<div class="flag"><b>⚠ ข้อควรพิจารณา:</b> ${f}</div>`).join('');
+
+  $('#sheet').innerHTML=`
+  <div class="rep-top">
+    <div class="rep-brand">
+      <div class="logobox"><img src="data:image/png;base64,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" alt="CardioPluz"></div>
+      <div class="bn"><div class="eyebrow">CardioPluz Clinic</div><h2>คลินิกอายุรกรรมโรคหัวใจ คาร์ดิโอพลัซ</h2></div>
+    </div>
+    <div class="rep-title">
+      <div class="gold-rule"></div>
+      <h1>แผนการดูแลสุขภาพหัวใจเฉพาะบุคคล</h1>
+      <p>Personalized Heart Care Plan · จัดทำเฉพาะสำหรับ ${p.name}</p>
+    </div>
+  </div>
+
+  <div class="rep-meta">
+    <div class="m"><div class="lbl">ผู้รับบริการ</div><div class="val">${p.name}</div></div>
+    <div class="m"><div class="lbl">อายุ / เพศ</div><div class="val">${p.age} ปี · ${p.sex==='male'?'ชาย':'หญิง'}</div></div>
+    <div class="m"><div class="lbl">น้ำหนัก / ส่วนสูง</div><div class="val">${p.wt} กก. · ${p.ht} ซม.</div></div>
+    <div class="m"><div class="lbl">วันที่ออกรายงาน</div><div class="val">${dateStr}</div></div>
+  </div>
+
+  <div class="rep-body">
+    <div class="sec" style="margin-top:6px">
+      <div class="sec-h"><span class="dot"></span><h3>ภาวะที่นำมาคำนวณ</h3><span class="en">CONDITIONS</span></div>
+      <p style="margin:0;color:var(--slate);font-size:.97rem">${condBadges(c)}</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="dot"></span><h3>ค่าเป้าหมายเฉพาะคุณ</h3><span class="en">YOUR TARGETS</span></div>
+      <div class="targets">
+        <div class="tcard"><div class="ico">⚖️</div><div class="tlbl">ดัชนีมวลกาย (BMI)</div>
+          <div class="tval">${r.bmi.toFixed(1)} <small>${r.bmiStatus}</small></div>
+          <div class="tnote">น้ำหนักที่เหมาะสม ${r.idealLo.toFixed(0)}–${r.idealHi.toFixed(0)} กก.</div></div>
+
+        <div class="tcard"><div class="ico">🥗</div><div class="tlbl">โปรตีนต่อวัน</div>
+          <div class="tval">${r.proteinG[0]}–${r.proteinG[1]} <small>กรัม</small></div>
+          <div class="tnote">${r.pLo.toFixed(1)}–${r.pHi.toFixed(1)} ก./กก. · ${r.pBasisTxt}</div></div>
+
+        <div class="tcard"><div class="ico">🔥</div><div class="tlbl">พลังงานเป้าหมาย</div>
+          <div class="tval">${pretty(round(r.kcalTarget,10))} <small>kcal</small></div>
+          <div class="tnote">${r.kcalNote} (TDEE ≈ ${pretty(round(r.tdee,10))})</div></div>
+
+        <div class="tcard"><div class="ico">🧂</div><div class="tlbl">โซเดียมต่อวัน</div>
+          <div class="tval" style="font-size:1.15rem">${r.naTxt}</div>
+          <div class="tnote">เกลือ ≈ 1 ช้อนชา</div></div>
+
+        <div class="tcard"><div class="ico">❤️</div><div class="tlbl">ชีพจรขณะออกกำลังกาย</div>
+          <div class="tval">${r.hrLo}–${r.hrHi} <small>ครั้ง/นาที</small></div>
+          <div class="tnote">${r.zoneLabel} (Max HR ≈ ${r.maxHR})</div></div>
+
+        <div class="tcard"><div class="ico">🩸</div><div class="tlbl">ความดันเป้าหมาย (HBPM)</div>
+          <div class="tval">${r.bpTarget} <small>มม.ปรอท</small></div>
+          <div class="tnote">วัดที่บ้าน · ${r.bpNote}<br>ค่าที่วัดได้: ${p.sbp}/${p.dbp}</div></div>
+
+        ${r.fluid?`<div class="tcard"><div class="ico">💧</div><div class="tlbl">จำกัดน้ำดื่มต่อวัน</div>
+          <div class="tval" style="font-size:1.2rem">${r.fluid}</div>
+          <div class="tnote">รวมน้ำซุป/นม · ควรตวง</div></div>`:''}
+      </div>
+    </div>
+
+    ${flagHtml}
+
+    <div class="sec">
+      <div class="sec-h"><span class="dot"></span><h3>โภชนาการ</h3><span class="en">NUTRITION</span></div>
+      <ul class="rl">${liList(r.nut)}</ul>
+      ${r.pNote?`<div class="flag"><b>หมายเหตุโปรตีน:</b> ${r.pNote}</div>`:''}
+
+      <div class="callout"><span class="ct">🥤 ระวังเครื่องดื่มหวานให้มากที่สุด</span>${r.sugaryNote}</div>
+
+      <div class="subh">ตัวอย่างแหล่งโปรตีน — ให้ได้ราว ${r.proteinG[0]}–${r.proteinG[1]} กรัม/วัน</div>
+      <table class="ftable"><tbody>
+        ${r.proteinFoods.map(f=>`<tr><td>${f[0]}</td><td>${f[1]}</td></tr>`).join('')}
+      </tbody></table>
+      <div class="tip"><b>วิธีกะง่ายๆ:</b> เนื้อสัตว์ไม่ติดมัน/ปลา 1 ฝ่ามือ ≈ 20–30 ก. — จัดทุกมื้อให้มีโปรตีนอย่างน้อย 1 ฝ่ามือ แล้วเสริมไข่ นม หรือเต้าหู้ให้ครบเป้าหมายต่อวัน</div>
+
+      <div class="twocol" style="margin-top:6px">
+        <div>
+          <div class="subh">ผักที่แนะนำ (≥ 3 ทัพพี/วัน)</div>
+          <div class="chips">${r.veg.map(v=>`<span class="chip">${v}</span>`).join('')}</div>
+        </div>
+        <div>
+          <div class="subh">ผลไม้หวานน้อย (2–3 ส่วน/วัน · 1 ส่วน ≈ 1 กำปั้น)</div>
+          <div class="chips">${r.fruitOk.map(v=>`<span class="chip">${v}</span>`).join('')}</div>
+          <div class="subh" style="margin-top:10px">ผลไม้หวานจัด — ควรจำกัด</div>
+          <div class="chips">${r.fruitLimit.map(v=>`<span class="chip bad">${v}</span>`).join('')}</div>
+        </div>
+      </div>
+
+      <div class="subh">น้ำมันและไขมัน</div>
+      <div class="chips"><span style="font-weight:600;color:var(--teal-deep);font-size:.88rem;align-self:center">ใช้ได้:</span>${r.oilOk.map(v=>`<span class="chip">${v}</span>`).join('')}</div>
+      <div class="chips"><span style="font-weight:600;color:#8a3a1c;font-size:.88rem;align-self:center">ควรเลี่ยง:</span>${r.oilAvoid.map(v=>`<span class="chip bad">${v}</span>`).join('')}</div>
+      <div class="tip">${r.oilNote}</div>
+
+      ${r.saltSub?`<div class="${r.saltSub.kind==='avoid'?'flag':'callout'}"><span class="${r.saltSub.kind==='avoid'?'':'ct'}">${r.saltSub.kind==='avoid'?'<b>⚠ เกลือโพแทสเซียม:</b> ':'🧂 เกลือโพแทสเซียม (เกลือลดโซเดียม)'}</span>${r.saltSub.text}</div>`:''}
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="dot"></span><h3>การออกกำลังกาย</h3><span class="en">EXERCISE</span></div>
+      <ul class="rl">${liList(r.ex)}</ul>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="dot"></span><h3>การใช้ยา · การปฏิบัติตัว · การติดตามอาการ</h3><span class="en">CARE & MONITORING</span></div>
+      <ul class="rl">${liList(r.med)}</ul>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="dot"></span><h3>วัคซีนที่แนะนำ</h3><span class="en">VACCINES</span></div>
+      <div class="vacc">${vaccHtml}</div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="dot"></span><h3>ไลฟ์สไตล์แบบองค์รวม</h3><span class="en">HOLISTIC WELL-BEING</span></div>
+      <ul class="rl">
+        <li><b>การนอน</b> 7–8 ชั่วโมง/คืน เวลาสม่ำเสมอ · ห้องนอนมืดและเย็น (22–24°C) · หากตื่นมาไม่สดชื่นหรือกรนหยุดหายใจ (OSA) ควรแจ้งแพทย์</li>
+        <li><b>จัดการความเครียด</b> ความเครียดเรื้อรังเพิ่มคอร์ติซอล ทำให้ความดันและน้ำตาลสูง · ฝึกหายใจลึก เทคนิค 4-7-8 วันละ 5–10 นาที</li>
+        <li><b>อุปกรณ์ติดตามสุขภาพ</b> สวม Smartwatch ตั้งเป้าเดิน 7,000–10,000 ก้าว/วัน · ใช้ฟังก์ชันแจ้งจังหวะหัวใจผิดปกติ/บันทึก ECG มาให้แพทย์</li>
+        <li><b>มลภาวะ PM 2.5</b> วันค่าฝุ่นสูง งดออกกำลังกายกลางแจ้งและเปิดเครื่องฟอกอากาศ เพราะฝุ่นกระตุ้นการอักเสบของหลอดเลือด</li>
+      </ul>
+    </div>
+
+    <div class="rep-foot">
+      <div class="disc">เอกสารนี้เป็นคำแนะนำทั่วไปที่คำนวณจากข้อมูลที่กรอกและอ้างอิงแนวทาง ACC/AHA, ESC, ADA และแนวทางเวชปฏิบัติของไทย เพื่อใช้ประกอบการดูแลตนเอง ไม่ทดแทนการวินิจฉัยและคำสั่งการรักษาของแพทย์ผู้ดูแล กรุณาปรับเป้าหมายโปรตีน/โซเดียม/โพแทสเซียม/ระดับการออกกำลังกายตามผลตรวจจริงและคำแนะนำของแพทย์เฉพาะราย</div>
+      <div class="sig">
+        <div class="doc">แพทย์ผู้ดูแล: <b>แพทย์ณัฏฐา</b> · <b>แพทย์พรอนงค์</b><br>ลงนาม ____________________________</div>
+        <div class="stamp"><div class="clinic">CardioPluz Clinic</div>คลินิกอายุรกรรมโรคหัวใจ คาร์ดิโอพลัซ</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- events ---------- */
+$('#genBtn').addEventListener('click',()=>{
+  const {p,c}=readForm();
+  const errs=validate(p);
+  const box=$('#alertBox');
+  if(errs.length){
+    box.textContent='กรุณากรอกข้อมูลให้ครบ: '+errs.join(', ');
+    box.classList.add('show'); box.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  box.classList.remove('show');
+  const r=buildPlan(p,c);
+  render(p,c,r);
+  document.querySelector('.stack').style.display='none';
+  document.querySelector('.app-head').style.display='none';
+  $('#report').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+$('#editBtn').addEventListener('click',()=>{
+  $('#report').classList.remove('show');
+  document.querySelector('.stack').style.display='';
+  document.querySelector('.app-head').style.display='';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+$('#printBtn').addEventListener('click',()=>window.print());
+
+$('#resetBtn').addEventListener('click',()=>{
+  document.querySelectorAll('input[type=text],input[type=number]').forEach(i=>i.value='');
+  document.querySelectorAll('.cond input[type=checkbox]').forEach(cb=>{cb.checked=false;});
+  document.querySelectorAll('.cond').forEach(c=>{c.classList.remove('on');const e=c.querySelector('.extra');if(e)e.classList.remove('show');});
+  $('#alertBox').classList.remove('show');
+});
+</script>
+</body>
+</html>
