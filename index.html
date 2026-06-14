@@ -44,6 +44,32 @@ body{
 h1,h2,h3,h4,.kanit{font-family:'Kanit',sans-serif;font-weight:600;letter-spacing:.1px}
 .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 80px}
 
+/* ---------- Tabs ---------- */
+.tabbar{display:flex;gap:6px;margin-bottom:22px;border-bottom:2px solid var(--line);padding-bottom:0}
+.tab{font-family:'Kanit';font-weight:500;font-size:.98rem;padding:11px 22px;border:none;background:none;
+  color:var(--slate);cursor:pointer;border-radius:11px 11px 0 0;border-bottom:3px solid transparent;
+  margin-bottom:-2px;transition:.15s}
+.tab:hover{color:var(--teal-dark);background:var(--teal-mist)}
+.tab.active{color:var(--teal-deep);border-bottom-color:var(--teal);background:var(--teal-mist)}
+
+/* ---------- Patient list ---------- */
+.listbar{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.listbar input{flex:1;min-width:200px;padding:12px 15px;border:1.5px solid var(--line);border-radius:12px;
+  font-family:inherit;font-size:.98rem;background:#fbfdfc}
+.listbar input:focus{outline:none;border-color:var(--teal);background:#fff;box-shadow:0 0 0 4px rgba(21,168,156,.12)}
+.listcount{font-size:.88rem;color:var(--faint);margin-bottom:12px}
+.prow{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);
+  border-radius:14px;margin-bottom:10px;background:#fbfdfc;transition:.15s}
+.prow:hover{border-color:var(--teal);background:#fff;box-shadow:var(--shadow)}
+.prow .pinfo{flex:1;min-width:0}
+.prow .phn{font-family:'Kanit';font-weight:600;color:var(--teal-deep);font-size:1.02rem}
+.prow .phn .pname{color:var(--ink);font-weight:500;margin-left:8px}
+.prow .pmeta{font-size:.82rem;color:var(--faint);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .pacts{display:flex;gap:8px;flex:none}
+.prow .pacts .btn{padding:9px 15px;font-size:.88rem}
+.list-empty{padding:40px 20px;text-align:center;color:var(--faint)}
+.list-empty .big{font-size:2rem;margin-bottom:8px}
+
 /* ---------- App header ---------- */
 .app-head{display:flex;align-items:center;gap:18px;margin-bottom:26px}
 .app-head img{height:62px;width:auto;filter:drop-shadow(0 4px 10px rgba(10,90,84,.15))}
@@ -324,6 +350,13 @@ table.trk-trans tbody tr:nth-child(even) td:first-child{background:var(--teal-mi
     </div>
   </div>
 
+  <!-- ===== Tab bar ===== -->
+  <div class="tabbar no-print">
+    <button class="tab active" data-tab="plan">📝 สร้าง/แก้ไขแผน</button>
+    <button class="tab" data-tab="list">👥 รายชื่อคนไข้</button>
+  </div>
+
+  <div id="pagePlan">
   <div class="stack no-print">
     <!-- ===== STEP 1: patient data ===== -->
     <div class="card">
@@ -533,7 +566,24 @@ table.trk-trans tbody tr:nth-child(even) td:first-child{background:var(--teal-mi
     </div>
     <div class="report-sheet" id="sheet"></div>
   </div>
+  </div><!-- /pagePlan -->
 
+  <!-- ===== Patient list page ===== -->
+  <div id="pageList" class="no-print" style="display:none">
+    <div class="card">
+      <div class="card-head"><div class="step">👥</div>
+        <div><h2>รายชื่อคนไข้ที่บันทึกไว้</h2><p>ค้นหาด้วย HN หรือชื่อ · เปิดเพื่อแก้ไข หรือพิมพ์รายงานเดิม</p></div>
+      </div>
+      <div class="card-body">
+        <div class="listbar">
+          <input type="text" id="patientSearch" placeholder="🔍 ค้นหา HN หรือชื่อคนไข้...">
+          <button class="btn btn-ghost" id="refreshList" type="button">🔄 รีเฟรช</button>
+        </div>
+        <div class="listcount" id="listCount"></div>
+        <div id="patientList"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1338,29 +1388,111 @@ $('#loadBtn').addEventListener('click',async()=>{
 });
 
 /* ---------- events ---------- */
-$('#genBtn').addEventListener('click',()=>{
+function generateReport(){
   const {p,c,g,track,lab,labTrack}=readForm();
   const errs=validate(p);
   const box=$('#alertBox');
   if(errs.length){
     box.textContent='กรุณากรอกข้อมูลให้ครบ: '+errs.join(', ');
     box.classList.add('show'); box.scrollIntoView({behavior:'smooth',block:'center'});
-    return;
+    return false;
   }
   box.classList.remove('show');
   const r=buildPlan(p,c,g,track,lab,labTrack);
   render(p,c,r);
   document.querySelector('.stack').style.display='none';
-  document.querySelector('.app-head').style.display='none';
   $('#report').classList.add('show');
-  window.scrollTo({top:0,behavior:'smooth'});
+  return true;
+}
+$('#genBtn').addEventListener('click',()=>{
+  if(generateReport()) window.scrollTo({top:0,behavior:'smooth'});
 });
 
 $('#editBtn').addEventListener('click',()=>{
   $('#report').classList.remove('show');
   document.querySelector('.stack').style.display='';
-  document.querySelector('.app-head').style.display='';
   window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ---------- Tabs ---------- */
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  $('#pagePlan').style.display = tab==='plan'?'':'none';
+  $('#pageList').style.display = tab==='list'?'':'none';
+  if(tab==='list') loadPatientList();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
+
+/* ---------- Patient list ---------- */
+let _patients=null;
+const condShort={acs:'ACS',ccs:'CCS',hf:'HF',af:'AF',vhd:'ลิ้นหัวใจ',dm:'DM',ht:'HT',dlp:'ไขมัน',ob:'อ้วน',ckd:'CKD',cir:'ตับแข็ง',htg:'TG สูง'};
+async function loadPatientList(force){
+  const wrap=$('#patientList'), cnt=$('#listCount');
+  if(_patients && !force){ renderPatientList(); return; }
+  if(!db){ wrap.innerHTML='<div class="list-empty"><div class="big">🔌</div>เชื่อมต่อฐานข้อมูลไม่ได้ — ตรวจสอบอินเทอร์เน็ต</div>'; cnt.textContent=''; return; }
+  wrap.innerHTML='<div class="list-empty">⏳ กำลังโหลดรายชื่อ...</div>'; cnt.textContent='';
+  try{
+    const snap=await db.collection('patients').get();
+    _patients=[];
+    snap.forEach(doc=>{ const d=doc.data()||{}; _patients.push({
+      hn:doc.id, name:d.name||'(ไม่มีชื่อ)', age:d.age||'', sex:d.sex||'',
+      conditions:d.conditions||{}, updatedAt:d.updatedAt||'',
+      visits:(d.vitalsHistory||d.vitals||[]).length
+    }); });
+    _patients.sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
+    renderPatientList();
+  }catch(e){ console.error(e); wrap.innerHTML='<div class="list-empty"><div class="big">⚠️</div>โหลดรายชื่อไม่สำเร็จ: '+e.message+'<br><span style="font-size:.82rem">(อาจต้องตั้งค่า Firestore Security Rules ให้อ่านได้)</span></div>'; }
+}
+function renderPatientList(){
+  const wrap=$('#patientList'), cnt=$('#listCount');
+  const q=($('#patientSearch').value||'').trim().toLowerCase();
+  let list=_patients||[];
+  if(q) list=list.filter(p=>(p.hn||'').toLowerCase().includes(q)||(p.name||'').toLowerCase().includes(q));
+  cnt.textContent='พบ '+list.length+' คน'+(q?' (กรองจากทั้งหมด '+_patients.length+')':'');
+  if(!list.length){ wrap.innerHTML='<div class="list-empty"><div class="big">🗂️</div>'+(q?'ไม่พบคนไข้ที่ตรงกับคำค้น':'ยังไม่มีข้อมูลคนไข้ที่บันทึกไว้')+'</div>'; return; }
+  wrap.innerHTML=list.map(p=>{
+    const conds=Object.keys(p.conditions||{}).filter(k=>p.conditions[k]&&condShort[k]).map(k=>condShort[k]).join(', ')||'—';
+    const upd=p.updatedAt?new Date(p.updatedAt).toLocaleDateString('th-TH'):'—';
+    return `<div class="prow">
+      <div class="pinfo">
+        <div class="phn">HN ${p.hn}<span class="pname">${p.name}</span></div>
+        <div class="pmeta">${p.age?p.age+' ปี · ':''}${p.sex==='male'?'ชาย':p.sex==='female'?'หญิง':''} · โรค: ${conds} · บันทึก ${p.visits} ครั้ง · อัปเดต ${upd}</div>
+      </div>
+      <div class="pacts">
+        <button class="btn btn-ghost" data-open="${p.hn}">✏️ เปิด</button>
+        <button class="btn btn-primary" data-printhn="${p.hn}">🖨 พิมพ์</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+$('#patientSearch').addEventListener('input',()=>{ if(_patients) renderPatientList(); });
+$('#refreshList').addEventListener('click',()=>loadPatientList(true));
+
+// open / print a patient from the list (event delegation)
+async function loadPatientByHN(hn){
+  const doc=await db.collection('patients').doc(hn).get();
+  if(!doc.exists) throw new Error('ไม่พบข้อมูล HN '+hn);
+  $('#hn').value=hn;
+  setState(doc.data());
+}
+$('#patientList').addEventListener('click',async(e)=>{
+  const openHn=e.target.closest('[data-open]')?.dataset.open;
+  const printHn=e.target.closest('[data-printhn]')?.dataset.printhn;
+  if(!openHn && !printHn) return;
+  const hn=openHn||printHn;
+  const btn=e.target.closest('button'); const old=btn.textContent; btn.disabled=true; btn.textContent='⏳';
+  try{
+    await loadPatientByHN(hn);
+    switchTab('plan');
+    if(openHn){
+      $('#report').classList.remove('show');
+      document.querySelector('.stack').style.display='';
+    }else{
+      if(generateReport()) setTimeout(()=>window.print(),400);
+    }
+  }catch(err){ alert(err.message); }
+  finally{ btn.disabled=false; btn.textContent=old; }
 });
 
 // scoped printing
