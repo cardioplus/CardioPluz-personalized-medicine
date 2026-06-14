@@ -200,7 +200,91 @@ ul.rl li b{color:var(--teal-deep);font-weight:600}
 .rep-foot .stamp{text-align:right;font-size:.78rem;color:var(--faint)}
 .rep-foot .stamp .clinic{font-family:'Kanit';font-weight:600;color:var(--teal)}
 
-.print-bar{display:flex;justify-content:flex-end;gap:12px;margin:18px 2px 0}
+.print-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 2px 0;flex-wrap:wrap}
+.hnbar{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding-bottom:18px;border-bottom:1px dashed var(--line)}
+.hnbar .btn{padding:11px 18px;font-size:.92rem}
+.hnstatus{font-size:.86rem;color:var(--slate);align-self:center}
+.hnstatus.ok{color:var(--teal-dark)} .hnstatus.err{color:var(--warn)}
+.lab-sec{margin-top:20px;padding-top:16px;border-top:1px dashed var(--line)}
+.lab-h{font-family:'Kanit';font-weight:600;color:var(--teal-deep);font-size:.98rem;margin-bottom:10px}
+.lab-h span{font-family:'Sarabun';font-weight:400;color:var(--faint);font-size:.82rem}
+.trk-label{font-family:'Kanit';font-weight:600;color:var(--teal-deep);font-size:.92rem;margin-bottom:8px}
+.btn-save{background:var(--gold);color:#fff;box-shadow:0 8px 24px -10px rgba(184,146,78,.7)}
+.btn-save:hover{background:#a07e3e;transform:translateY(-1px)}
+.btn-save:disabled{opacity:.6;cursor:wait;transform:none}
+.dbmsg{margin-top:12px;font-size:.9rem;padding:0}
+.dbmsg.show{padding:11px 15px;border-radius:11px}
+.dbmsg.ok{background:var(--teal-mist);color:var(--teal-dark);border:1px solid var(--line)}
+.dbmsg.err{background:var(--warn-soft);color:var(--warn);border:1px solid #eccab8}
+.printgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.printgroup .btn{padding:10px 16px;font-size:.9rem}
+.pglabel{font-family:'Kanit';font-weight:500;color:var(--slate);font-size:.9rem}
+
+/* level preview in form */
+.lvprev{margin-top:9px;padding:11px 14px;background:var(--teal-mist);border:1px solid var(--line);
+  border-radius:11px;font-size:.9rem;color:var(--ink);min-height:20px;line-height:1.5}
+.lvprev .lvtag{font-family:'Kanit';font-weight:600;color:var(--teal-deep);margin-right:6px}
+.lvprev:empty{display:none}
+
+/* tracking input table */
+.trk-wrap{overflow-x:auto}
+table.trk-input{width:100%;border-collapse:collapse;font-size:.92rem}
+table.trk-input th{font-family:'Kanit';font-weight:500;font-size:.82rem;color:var(--slate);
+  text-align:center;padding:7px 6px;border-bottom:2px solid var(--teal-soft)}
+table.trk-input td{padding:4px 5px}
+table.trk-input input{width:100%;padding:8px 8px;border:1.3px solid var(--line);border-radius:9px;
+  text-align:center;font-size:.92rem;background:#fbfdfc}
+table.trk-input input:focus{outline:none;border-color:var(--teal);background:#fff}
+table.trk-input input[type=date]{font-family:'Sarabun'}
+table.trk-input-trans th.rowlbl{text-align:left;font-family:'Kanit';font-weight:500;font-size:.85rem;
+  color:var(--teal-deep);white-space:nowrap;padding:6px 12px 6px 4px;background:var(--teal-mist);
+  border-radius:8px 0 0 8px;position:sticky;left:0;z-index:1}
+table.trk-input-trans td{min-width:104px}
+table.trk-input-trans tr:first-child input[type=date]{font-weight:600;color:var(--teal-deep);
+  border-color:var(--teal-soft);background:#f3faf9}
+
+/* goal section in report */
+.goalrow{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:4px}
+@media (max-width:640px){.goalrow{grid-template-columns:1fr}}
+.goalcard{border:1px solid var(--line);border-radius:15px;padding:16px 18px;background:linear-gradient(180deg,var(--teal-mist),#fff)}
+.goalcard .gtop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.goalcard .gttl{font-family:'Kanit';font-weight:600;color:var(--teal-deep);font-size:1rem}
+.goalcard .glv{font-family:'Kanit';font-weight:700;color:var(--teal);font-size:1.05rem;white-space:nowrap}
+.goalcard .glv b{font-size:1.7rem}
+.lvbar{display:flex;gap:3px;margin:11px 0}
+.lvbar span{flex:1;height:7px;border-radius:3px;background:var(--line-soft)}
+.lvbar span.done{background:var(--teal)}
+.lvbar span.cur{background:var(--gold);box-shadow:0 0 0 2px var(--gold-soft)}
+.goaltext{font-size:.96rem;line-height:1.55;margin-top:6px;padding:11px 13px;background:#fff;
+  border:1px dashed var(--teal);border-radius:11px}
+.goaltext[contenteditable]:focus{outline:none;border-style:solid;box-shadow:0 0 0 3px rgba(21,168,156,.12)}
+.tasklist{margin:0;padding-left:2px;list-style:none}
+.tasklist li{position:relative;padding:3px 0 3px 22px;font-size:.95rem}
+.tasklist li::before{content:"";position:absolute;left:4px;top:11px;width:8px;height:8px;border-radius:2px;background:var(--teal);transform:rotate(45deg)}
+.editmark{font-size:.74rem;color:var(--faint);margin-top:3px}
+.goalnext{font-size:.86rem;color:var(--slate);margin-top:8px}
+.goalnext b{color:var(--teal-deep)}
+.goalfocus{margin-top:14px}
+.goalfocus .subh{margin:0 0 7px}
+
+/* tracking table (report) */
+table.trk-report{width:100%;border-collapse:collapse;font-size:.95rem;margin-top:4px}
+table.trk-report th{background:var(--teal);color:#fff;font-family:'Kanit';font-weight:500;
+  padding:9px 10px;font-size:.88rem;text-align:center}
+table.trk-report th:first-child{border-radius:9px 0 0 0;text-align:left}
+table.trk-report th:last-child{border-radius:0 9px 0 0}
+table.trk-report td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--line-soft)}
+table.trk-report td:first-child{text-align:left;font-weight:600;color:var(--teal-deep)}
+table.trk-report tr:nth-child(even){background:var(--teal-mist)}
+/* transposed: first column = parameter name */
+table.trk-trans th:first-child{min-width:130px}
+table.trk-trans th{text-align:center;font-size:.84rem;white-space:nowrap}
+table.trk-trans td{white-space:nowrap}
+table.trk-trans td:first-child{background:var(--teal-mist);font-family:'Kanit';font-weight:500;font-size:.9rem}
+table.trk-trans tbody tr:nth-child(even){background:#fff}
+table.trk-trans tbody tr:nth-child(even) td:first-child{background:var(--teal-mist)}
+.trk-empty{padding:14px;text-align:center;color:var(--faint);border:1px dashed var(--line);border-radius:10px;font-size:.9rem}
+.trk-note{font-size:.8rem;color:var(--faint);margin-top:8px}
 
 /* ---------- Print ---------- */
 @media print{
@@ -211,12 +295,21 @@ ul.rl li b{color:var(--teal-deep);font-weight:600}
   #report{display:block !important}
   .report-sheet{box-shadow:none;border:none;border-radius:0}
   .rep-top{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .tcard,.sec-h,.vacc .v,.flag,.rep-top,.sec-h .dot,.tcard.accent,.chip,.chip.bad,.callout,.ftable tr,.tip{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tcard,.sec-h,.vacc .v,.flag,.rep-top,.sec-h .dot,.tcard.accent,.chip,.chip.bad,.callout,.ftable tr,.tip,.goalcard,.lvbar span,.goaltext,.trk-report th,.trk-report tr,.trk-trans td:first-child{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .rep-body{padding:8px 0 0}
   .rep-meta .m{padding:10px 14px}
   .sec{margin-top:20px}
+  .goaltext{border-style:solid}
+  /* scoped printing */
+  body.print-goal .rep-body > .sec:not(.sec-goal){display:none}
+  body.print-goal .rep-foot{display:none}
+  body.print-track .rep-body > .sec:not(.sec-track){display:none}
+  body.print-track .rep-foot{display:none}
 }
 </style>
+<!-- Firebase (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -238,6 +331,14 @@ ul.rl li b{color:var(--teal-deep);font-weight:600}
         <div><h2>ข้อมูลผู้ป่วย</h2><p>ใช้คำนวณ BMI · พลังงาน · โปรตีน · โซนหัวใจ</p></div>
       </div>
       <div class="card-body">
+        <div class="hnbar">
+          <div class="field" style="margin:0;flex:1;min-width:180px">
+            <label>HN (เลขประจำตัวผู้ป่วย)</label>
+            <input type="text" id="hn" placeholder="เช่น 0001234">
+          </div>
+          <button class="btn btn-ghost" id="loadBtn" type="button">📂 เรียกผู้ป่วยเก่า (ตาม HN)</button>
+          <span class="hnstatus" id="hnStatus"></span>
+        </div>
         <div class="grid g3">
           <div class="field" style="grid-column:span 2">
             <label>ชื่อ–นามสกุล</label>
@@ -267,6 +368,19 @@ ul.rl li b{color:var(--teal-deep);font-weight:600}
           <div class="field">
             <label>สูบบุหรี่</label>
             <select id="smoke"><option value="no">ไม่สูบ</option><option value="yes">สูบ / เพิ่งเลิก</option></select>
+          </div>
+        </div>
+
+        <div class="lab-sec">
+          <div class="lab-h">ผลแล็บครั้งนี้ <span>(ไม่บังคับ — เว้นว่างได้)</span></div>
+          <div class="grid g3 lab-grid">
+            <div class="field"><label>FBS <span class="unit">(mg/dL)</span></label><input type="number" id="lab_fbs" step="0.1" placeholder="–"></div>
+            <div class="field"><label>HbA1c <span class="unit">(%)</span></label><input type="number" id="lab_a1c" step="0.1" placeholder="–"></div>
+            <div class="field"><label>Cr <span class="unit">(mg/dL)</span></label><input type="number" id="lab_cr" step="0.01" placeholder="–"></div>
+            <div class="field"><label>TC <span class="unit">(mg/dL)</span></label><input type="number" id="lab_tc" step="1" placeholder="–"></div>
+            <div class="field"><label>TG <span class="unit">(mg/dL)</span></label><input type="number" id="lab_tg" step="1" placeholder="–"></div>
+            <div class="field"><label>HDL <span class="unit">(mg/dL)</span></label><input type="number" id="lab_hdl" step="1" placeholder="–"></div>
+            <div class="field"><label>LDL <span class="unit">(mg/dL)</span></label><input type="number" id="lab_ldl" step="1" placeholder="–"></div>
           </div>
         </div>
       </div>
@@ -334,13 +448,74 @@ ul.rl li b{color:var(--teal-deep);font-weight:600}
             <div class="top"><input type="checkbox"><div><div class="nm">โรคไตเรื้อรัง</div><div class="sub">CKD (ยังไม่ฟอกไต)</div></div></div>
           </label>
 
+          <label class="cond" data-k="cir">
+            <div class="top"><input type="checkbox"><div><div class="nm">โรคตับแข็ง</div><div class="sub">Cirrhosis</div></div></div>
+            <div class="extra">
+              <label><input type="checkbox" name="ascites"> มีภาวะท้องมาน/บวม (Ascites/Edema)</label>
+            </div>
+          </label>
+
+          <label class="cond" data-k="htg">
+            <div class="top"><input type="checkbox"><div><div class="nm">ไตรกลีเซอไรด์สูง</div><div class="sub">Hypertriglyceridemia</div></div></div>
+            <div class="extra">
+              <label><input type="checkbox" name="tgSevere"> สูงมาก (TG &gt; 500 mg/dL · เสี่ยงตับอ่อนอักเสบ)</label>
+            </div>
+          </label>
+
         </div>
+      </div>
+    </div>
+
+    <!-- ===== STEP 3: monthly goal levels ===== -->
+    <div class="card">
+      <div class="card-head"><div class="step">3</div>
+        <div><h2>เป้าหมายของเดือนนี้ (Level 1–20)</h2><p>แพทย์เลือกว่ารอบนี้คนไข้ปรับถึงระดับใด — ค่อยๆ ไต่จากง่ายไปยาก</p></div>
+      </div>
+      <div class="card-body">
+        <div class="grid g2">
+          <div class="field">
+            <label>🥗 ระดับเป้าหมายด้านอาหาร</label>
+            <select id="dietLv"></select>
+            <div class="lvprev" id="dietPrev"></div>
+          </div>
+          <div class="field">
+            <label>🏃 ระดับเป้าหมายการออกกำลังกาย</label>
+            <select id="exLv"></select>
+            <div class="lvprev" id="exPrev"></div>
+          </div>
+        </div>
+        <p style="margin:14px 0 0;font-size:.84rem;color:var(--faint)">เลือกระดับแล้วข้อความคำแนะนำจะแสดงให้ดูทันที และในรายงานสามารถคลิกแก้ไขข้อความได้</p>
+      </div>
+    </div>
+
+    <!-- ===== STEP 4: tracking tables ===== -->
+    <div class="card">
+      <div class="card-head"><div class="step">4</div>
+        <div><h2>ตารางติดตามค่า (ย้อนหลัง)</h2><p>ความดัน · ชีพจร · น้ำหนัก · ผลแล็บ ตามวันที่ — กรอกได้สูงสุด 5 ครั้งล่าสุด</p></div>
+      </div>
+      <div class="card-body">
+        <div class="trk-label">สัญญาณชีพ</div>
+        <div class="trk-wrap">
+          <table class="trk-input trk-input-trans">
+            <tbody id="trkBody"></tbody>
+          </table>
+        </div>
+
+        <div class="trk-label" style="margin-top:18px">ผลแล็บ</div>
+        <div class="trk-wrap">
+          <table class="trk-input trk-input-trans">
+            <tbody id="labBody"></tbody>
+          </table>
+        </div>
+        <p style="margin:12px 0 0;font-size:.84rem;color:var(--faint)">วันที่อยู่หัวคอลัมน์ (1 คอลัมน์ = 1 ครั้ง) · ปกติไม่ต้องกรอกตารางนี้เอง เพราะระบบจะเพิ่มค่าวันนี้ให้อัตโนมัติเมื่อกดบันทึก · ช่องที่ไม่กรอกจะเว้นว่าง</p>
 
         <div class="actions">
           <button class="btn btn-primary" id="genBtn">⊕ สร้างรายงานแผนการดูแล</button>
+          <button class="btn btn-save" id="saveBtn" type="button">💾 บันทึกลงฐานข้อมูล</button>
           <button class="btn btn-ghost" id="resetBtn">ล้างข้อมูล</button>
         </div>
         <div class="alert" id="alertBox"></div>
+        <div class="dbmsg" id="dbMsg"></div>
       </div>
     </div>
   </div>
@@ -349,7 +524,12 @@ ul.rl li b{color:var(--teal-deep);font-weight:600}
   <div id="report">
     <div class="print-bar no-print">
       <button class="btn btn-ghost" id="editBtn">← กลับไปแก้ไข</button>
-      <button class="btn btn-primary" id="printBtn">🖨 พิมพ์ / บันทึก PDF</button>
+      <div class="printgroup">
+        <span class="pglabel">พิมพ์:</span>
+        <button class="btn btn-primary" data-print="all">🖨 ทั้งหมด</button>
+        <button class="btn btn-ghost" data-print="goal">🎯 เฉพาะเป้าหมายเดือนนี้</button>
+        <button class="btn btn-ghost" data-print="track">📊 เฉพาะตารางติดตาม</button>
+      </div>
     </div>
     <div class="report-sheet" id="sheet"></div>
   </div>
@@ -378,16 +558,181 @@ document.querySelectorAll('.cond').forEach(c=>{
 function round(n,step=1){return Math.round(n/step)*step;}
 function pretty(n){return n.toLocaleString('en-US');}
 
+/* ===== 20-level progression ladders · 2 ภารกิจ/ระดับ (ง่าย → ยาก) ===== */
+const dietLadder=[
+ ['งดน้ำอัดลม/น้ำหวาน/ชา-กาแฟเย็น','ดื่มน้ำเปล่าแทนทุกครั้งที่อยากดื่มหวาน'],
+ ['เลิกน้ำผลไม้กล่อง/นมเปรี้ยว','ดื่มน้ำเปล่าให้พอตลอดวัน'],
+ ['ลดของทอดเหลือไม่เกิน 1 มื้อ/วัน','เลี่ยงขนมกรุบกรอบและของมัน'],
+ ['กินผักทุกมื้ออย่างน้อยมื้อละ 1 ทัพพี','เพิ่มผักหลากสีในจาน'],
+ ['เปลี่ยนข้าวขาวเป็นข้าวกล้องอย่างน้อย 1 มื้อ/วัน','ลดข้าวเหนียวและแป้งขัดสี'],
+ ['ไม่เติมน้ำปลา/ซีอิ๊วเพิ่มที่โต๊ะอาหาร','ชิมก่อนปรุงทุกครั้ง'],
+ ['ลดขนมหวาน/เบเกอรีเหลือไม่เกิน 2 ครั้ง/สัปดาห์','เลือกผลไม้แทนของหวาน'],
+ ['มีโปรตีนคุณภาพดีทุกมื้อ (ปลา/ไข่/เต้าหู้/อกไก่)','เลี่ยงเนื้อแปรรูปและเนื้อติดมัน'],
+ ['กินผลไม้หวานน้อย 2–3 ส่วน/วัน','เลี่ยงผลไม้หวานจัด/ผลไม้เชื่อม'],
+ ['เลี่ยงอาหารแปรรูป (ไส้กรอก/ลูกชิ้น/บะหมี่กึ่งฯ)','ลดอาหารกระป๋อง'],
+ ['อ่านฉลากโซเดียมก่อนซื้อ','เลือกผลิตภัณฑ์โซเดียมต่ำ'],
+ ['เปลี่ยนของทอดเป็นต้ม/นึ่ง/ย่าง/อบ','เลี่ยงการใช้น้ำมันทอดซ้ำ'],
+ ['คุมข้าว/แป้งให้ราว ¼ ของจานต่อมื้อ','เพิ่มผักเป็นครึ่งจาน'],
+ ['ใช้น้ำมันดี (รำข้าว/มะกอก) ไม่เกิน 4–6 ช้อนชา/วัน','เลิกกะทิและไขมันสัตว์'],
+ ['กินช้าๆ เคี้ยวให้ละเอียด','หยุดเมื่ออิ่มราว 80%'],
+ ['ทำอาหารกินเองเป็นหลัก','ลดอาหารนอกบ้าน/สั่งเดลิเวอรี'],
+ ['คุมโซเดียมตามเป้าหมายเฉพาะคุณ','ตวง/กะปริมาณเครื่องปรุง'],
+ ['จัดสัดส่วนโปรตีนให้ได้ตามเป้าหมายต่อวัน','คุมพลังงานรวมตามเป้าหมาย'],
+ ['วางแผนเมนูล่วงหน้าทั้งสัปดาห์','จดบันทึกการกินทุกวัน'],
+ ['รักษานิสัยการกินเพื่อหัวใจให้สม่ำเสมอ','เป็นแบบอย่างให้คนในครอบครัว']
+];
+const exLadder=[
+ ['ลุกและยืดเหยียดเบาๆ วันละ 5 นาที','ลดการนั่งติดต่อกันเกิน 1 ชั่วโมง'],
+ ['เดินช้าๆ ในบ้านวันละ 10 นาที','ขยับร่างกายระหว่างวันบ่อยๆ'],
+ ['เดินต่อเนื่อง 10 นาที/วัน 5 วัน/สัปดาห์','อบอุ่นร่างกายก่อนเดินทุกครั้ง'],
+ ['เพิ่มการเดินเป็น 15 นาที/วัน','พยายามเดินให้ได้ทุกวัน'],
+ ['เดินให้เร็วขึ้นเล็กน้อย 15 นาที/วัน','คุมระดับให้เหนื่อยแต่ยังพูดได้'],
+ ['เดิน 20 นาที/วัน','เพิ่มจำนวนก้าวสะสมระหว่างวัน'],
+ ['เดินเร็วในโซนหัวใจเป้าหมาย 20 นาที/วัน','วัดชีพจรหลังออกกำลังกาย'],
+ ['เดินเร็ว 25 นาที/วัน','ยืดเหยียดหลังออกกำลังกายทุกครั้ง'],
+ ['เดินเร็ว 30 นาที/วัน 5 วัน/สัปดาห์','รักษาความสม่ำเสมอ'],
+ ['เดิน 30 นาที พร้อมคูลดาวน์','เพิ่มกิจกรรมเคลื่อนไหวในวันหยุด'],
+ ['เริ่มเวทเบาๆ (ยางยืด/น้ำหนักตัว) 1 วัน/สัปดาห์','ฝึกท่าพื้นฐานให้ถูกต้อง'],
+ ['แอโรบิก 30–40 นาที 5 วัน/สัปดาห์','เวทเทรนนิ่ง 2 วัน/สัปดาห์'],
+ ['แอโรบิก 40 นาที/วัน','จดบันทึกการออกกำลังกาย'],
+ ['เพิ่มความหนักเล็กน้อย (เดินขึ้นเนิน/ปั่นจักรยาน)','คงอยู่ในโซนหัวใจที่ปลอดภัย'],
+ ['ทำแอโรบิกให้ครบ 150 นาที/สัปดาห์','เวทเทรนนิ่ง 2 วัน/สัปดาห์'],
+ ['แอโรบิก 45–60 นาที/วัน','เพิ่มความหลากหลายของกิจกรรม'],
+ ['เพิ่มช่วงเร่งสลับ (interval) เบาๆ','เฝ้าระวังอาการผิดปกติขณะออกกำลัง'],
+ ['แอโรบิก 200+ นาที/สัปดาห์','เวทเทรนนิ่ง 3 วัน/สัปดาห์'],
+ ['คงกิจวัตร 250–300 นาที/สัปดาห์','เวทเทรนนิ่ง 2–3 วัน/สัปดาห์'],
+ ['รักษาระดับการออกกำลังกายให้สม่ำเสมอ','ตั้งเป้าหมายใหม่ที่ท้าทายตัวเอง']
+];
+// disease-specific "focus this month" tips
+function focusTips(c){
+  const has=k=>!!c[k], t=[];
+  if(has('acs')) t.push('กินยาให้ครบทุกมื้อ งดบุหรี่เด็ดขาด และเพิ่มกิจกรรมเท่าที่แพทย์อนุญาต');
+  if(has('hf')) t.push('ชั่งน้ำหนักทุกเช้าและตวงน้ำดื่ม จดบันทึกลงตารางติดตาม');
+  if(has('af')) t.push('งดแอลกอฮอล์ และจำกัดชา/กาแฟไม่เกิน 1–2 แก้ว/วัน');
+  if(has('dm')) t.push('งดน้ำตาล/น้ำหวานเด็ดขาด และคุมปริมาณข้าว-แป้งต่อมื้อ');
+  if(has('ht')) t.push('ลดเค็ม และวัดความดันที่บ้านบันทึกทุกวัน');
+  if(has('dlp')) t.push('เลี่ยงของทอด หนังสัตว์ และไขมันสัตว์');
+  if(has('ob')) t.push('ตั้งเป้าลดน้ำหนักสัปดาห์ละ 0.5 กก. แบบค่อยเป็นค่อยไป');
+  if(has('ckd')) t.push('คุมโปรตีน โซเดียม และเลือกผัก-ผลไม้โพแทสเซียมต่ำตามที่แพทย์แนะนำ');
+  if(has('cir')) t.push('กินโปรตีนให้พอและเพิ่มมื้อว่างก่อนนอน · งดเหล้าเด็ดขาด · เลี่ยงอาหารทะเลดิบ' + (c.ascites?' · ลดเค็มเข้มงวดเพราะมีท้องมาน':''));
+  if(has('htg')) t.push('งดเหล้า น้ำตาล และของมันเด็ดขาด' + (c.tgSevere?' (TG สูงมาก เสี่ยงตับอ่อนอักเสบ ต้องเข้มงวด)':'') + ' · เพิ่มปลาทะเล/โอเมก้า-3');
+  return t;
+}
+
+/* ===== cumulative tracking helpers ===== */
+const VITAL_F=['sb','db','hr','wt'];
+const LAB_F=['fbs','a1c','cr','tc','tg','hdl','ldl'];
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function hasData(e,fields){return fields.some(k=>e[k]!==undefined&&e[k]!=='');}
+function mergeRow(base,add,fields){
+  const out=Object.assign({},base);
+  fields.forEach(k=>{ if(add[k]!==undefined&&add[k]!=='') out[k]=add[k]; });
+  if(add.d) out.d=add.d;
+  return out;
+}
+function upsertByDate(arr,entry,fields,cap=12){
+  arr=(arr||[]).slice();
+  if(!entry.d || !hasData(entry,fields)) return arr;
+  const i=arr.findIndex(x=>x.d===entry.d);
+  if(i>=0) arr[i]=mergeRow(arr[i],entry,fields);
+  else arr.push(entry);
+  arr.sort((a,b)=>(b.d||'').localeCompare(a.d||''));
+  return arr.slice(0,cap);
+}
+function vitalRowHTML(e){e=e||{};
+  return `<tr><td><input type="date" class="t-date" value="${e.d||''}"></td>`+
+    `<td><input type="number" class="t-sbp" placeholder="–" value="${e.sb||''}"></td>`+
+    `<td><input type="number" class="t-dbp" placeholder="–" value="${e.db||''}"></td>`+
+    `<td><input type="number" class="t-hr" placeholder="–" value="${e.hr||''}"></td>`+
+    `<td><input type="number" step="0.1" class="t-wt" placeholder="–" value="${e.wt||''}"></td></tr>`;
+}
+function labRowHTML(e){e=e||{};
+  return `<tr><td><input type="date" class="l-date" value="${e.d||''}"></td>`+
+    `<td><input type="number" step="0.1" class="l-fbs" placeholder="–" value="${e.fbs||''}"></td>`+
+    `<td><input type="number" step="0.1" class="l-a1c" placeholder="–" value="${e.a1c||''}"></td>`+
+    `<td><input type="number" step="0.01" class="l-cr" placeholder="–" value="${e.cr||''}"></td>`+
+    `<td><input type="number" class="l-tc" placeholder="–" value="${e.tc||''}"></td>`+
+    `<td><input type="number" class="l-tg" placeholder="–" value="${e.tg||''}"></td>`+
+    `<td><input type="number" class="l-hdl" placeholder="–" value="${e.hdl||''}"></td>`+
+    `<td><input type="number" class="l-ldl" placeholder="–" value="${e.ldl||''}"></td></tr>`;
+}
+
+/* transposed input tables: วันที่ = หัวคอลัมน์ (แกน X), ค่า = แถวซ้าย (แกน Y) */
+const VITAL_CFG={dateCls:'t-date',minCols:5,params:[
+  ['SBP','t-sbp','','sb'],['DBP','t-dbp','','db'],['ชีพจร','t-hr','','hr'],['น้ำหนัก (กก.)','t-wt','0.1','wt']]};
+const LAB_CFG={dateCls:'l-date',minCols:5,params:[
+  ['FBS','l-fbs','0.1','fbs'],['HbA1c','l-a1c','0.1','a1c'],['Cr','l-cr','0.01','cr'],
+  ['TC','l-tc','','tc'],['TG','l-tg','','tg'],['HDL','l-hdl','','hdl'],['LDL','l-ldl','','ldl']]};
+function renderTransInput(tbodySel,data,cfg){
+  data=data||[];
+  const nCols=Math.max(data.length,cfg.minCols);
+  const cols=data.slice(0,nCols).reverse();          // oldest → newest (left → right)
+  while(cols.length<nCols) cols.push({});            // pad empty columns on the right
+  // date header row
+  let html=`<tr><th class="rowlbl">วันที่</th>`+
+    cols.map((e,c)=>`<td><input type="date" class="${cfg.dateCls}" data-c="${c}" value="${e.d||''}"></td>`).join('')+`</tr>`;
+  // parameter rows
+  cfg.params.forEach(([label,cls,step,key])=>{
+    html+=`<tr><th class="rowlbl">${label}</th>`+
+      cols.map((e,c)=>`<td><input type="number" ${step?`step="${step}"`:''} class="${cls}" data-c="${c}" placeholder="–" value="${e[key]||''}"></td>`).join('')+`</tr>`;
+  });
+  document.querySelector(tbodySel).innerHTML=html;
+}
+function renderVitalsRows(arr){ renderTransInput('#trkBody',arr,VITAL_CFG); }
+function renderLabsRows(arr){ renderTransInput('#labBody',arr,LAB_CFG); }
+function readTransInput(tbodySel,cfg,fields){
+  const out=[];
+  const dates=document.querySelectorAll(`${tbodySel} .${cfg.dateCls}`);
+  dates.forEach(dn=>{
+    const c=dn.dataset.c;
+    const e={d:dn.value.trim()};
+    cfg.params.forEach(([,cls,,key])=>{
+      const el=document.querySelector(`${tbodySel} .${cls}[data-c="${c}"]`);
+      e[key]=el?el.value.trim():'';
+    });
+    if(e.d && hasData(e,fields)) out.push(e);
+  });
+  // newest-first to match storage convention
+  out.sort((a,b)=>(b.d||'').localeCompare(a.d||''));
+  return out;
+}
+function readVitalsTable(){ return readTransInput('#trkBody',VITAL_CFG,VITAL_F); }
+function readLabsTable(){ return readTransInput('#labBody',LAB_CFG,LAB_F); }
+
+/* ===== init UI: level selects, tracking rows, live preview ===== */
+(function initUI(){
+  const dl=$('#dietLv'), el=$('#exLv');
+  for(let i=1;i<=20;i++){
+    dl.insertAdjacentHTML('beforeend',`<option value="${i}">Level ${i}</option>`);
+    el.insertAdjacentHTML('beforeend',`<option value="${i}">Level ${i}</option>`);
+  }
+  dl.value=1; el.value=1;
+  const taskList=(arr)=>arr.map(t=>`<div>• ${t}</div>`).join('');
+  const upd=()=>{
+    $('#dietPrev').innerHTML=`<span class="lvtag">อาหาร Lv ${dl.value}:</span>${taskList(dietLadder[dl.value-1])}`;
+    $('#exPrev').innerHTML=`<span class="lvtag">ออกกำลังกาย Lv ${el.value}:</span>${taskList(exLadder[el.value-1])}`;
+  };
+  dl.addEventListener('change',upd); el.addEventListener('change',upd); upd();
+
+  // initialize empty cumulative tables (5 rows each)
+  renderVitalsRows([]);
+  renderLabsRows([]);
+})();
+
 function readForm(){
   const get=id=>$(id).value.trim();
   const num=id=>parseFloat($(id).value);
   const p={
+    hn:get('#hn'),
     name:get('#name')||'ผู้รับบริการ',
     sex:$('#sex').value,
     age:num('#age'), wt:num('#wt'), ht:num('#ht'),
     sbp:num('#sbp'), dbp:num('#dbp'), rhr:num('#rhr'),
     act:parseFloat($('#act').value), smoke:$('#smoke').value
   };
+  // current-visit labs
+  const lab={ fbs:get('#lab_fbs'), a1c:get('#lab_a1c'), cr:get('#lab_cr'),
+    tc:get('#lab_tc'), tg:get('#lab_tg'), hdl:get('#lab_hdl'), ldl:get('#lab_ldl') };
   const c={};
   document.querySelectorAll('.cond').forEach(el=>{
     if(el.querySelector('input[type=checkbox]').checked) c[el.dataset.k]=true;
@@ -397,7 +742,21 @@ function readForm(){
   c.severeAS = document.querySelector('input[name=severeAS]')?.checked;
   c.warfarin = document.querySelector('input[name=warfarin]')?.checked;
   c.noac = document.querySelector('input[name=noac]')?.checked;
-  return {p,c};
+  c.ascites = document.querySelector('input[name=ascites]')?.checked;
+  c.tgSevere = document.querySelector('input[name=tgSevere]')?.checked;
+
+  // monthly goal levels
+  const g={ diet:parseInt($('#dietLv').value)||1, ex:parseInt($('#exLv').value)||1 };
+
+  // cumulative tracking: read tables, then auto-insert today's visit (for the report)
+  const td=todayStr();
+  const numStr=v=>isNaN(v)?'':String(v);
+  let track=readVitalsTable();
+  track=upsertByDate(track,{d:td,sb:numStr(p.sbp),db:numStr(p.dbp),hr:numStr(p.rhr),wt:numStr(p.wt)},VITAL_F);
+  let labTrack=readLabsTable();
+  labTrack=upsertByDate(labTrack,{d:td,fbs:lab.fbs,a1c:lab.a1c,cr:lab.cr,tc:lab.tc,tg:lab.tg,hdl:lab.hdl,ldl:lab.ldl},LAB_F);
+
+  return {p,c,g,track,lab,labTrack};
 }
 
 function validate(p){
@@ -410,7 +769,7 @@ function validate(p){
 }
 
 /* ---------- core engine ---------- */
-function buildPlan(p,c){
+function buildPlan(p,c,g,track,lab,labTrack){
   const hm=p.ht/100, bmi=p.wt/(hm*hm);
   const idealLo=18.5*hm*hm, idealHi=22.9*hm*hm, idealTarget=22*hm*hm;
   let bmiStatus;
@@ -426,7 +785,7 @@ function buildPlan(p,c){
   const vhdPostEarly = has('vhd') && c.vhdStatus==='post_early';
   const vhdPostLate  = has('vhd') && c.vhdStatus==='post_late';
   const vhdPreop = has('vhd') && c.vhdStatus==='preop';
-  const metabolic = has('dm')||has('ob')||has('dlp');
+  const metabolic = has('dm')||has('ob')||has('dlp')||has('htg');
   const established = has('acs')||has('ccs')||has('hf')||has('vhd');
   const weightLoss = has('ob')||bmi>=25;
 
@@ -448,6 +807,7 @@ function buildPlan(p,c){
   if(has('hf')) bump(1.1,1.4);
   if(vhdPostEarly) bump(1.2,1.5);
   if(metabolic) bump(1.2,1.5);
+  if(has('cir')) bump(1.2,1.5);   // cirrhosis: avoid muscle loss, protein NOT restricted unless overt encephalopathy
   if(has('acs')||has('ccs')) bump(1.0,1.2);
   let proteinG=[round(pLo*basisWt),round(pHi*basisWt)];
   if(has('ckd')){
@@ -460,7 +820,8 @@ function buildPlan(p,c){
   /* ---- sodium ---- */
   let naCap=2000;
   if(has('ht')) naCap=1500;
-  const naTxt = naCap===1500 ? '< 1,500 มก./วัน (เข้มงวด)' : '1,500 – 2,000 มก./วัน';
+  if(has('cir') && c.ascites) naCap=Math.min(naCap,2000);  // ascites: restrict ~<2000 (เข้มงวดขึ้น)
+  const naTxt = naCap===1500 ? '< 1,500 มก./วัน (เข้มงวด)' : (has('cir')&&c.ascites ? '< 2,000 มก./วัน (เข้มงวดเพราะท้องมาน)' : '1,500 – 2,000 มก./วัน');
 
   /* ---- fluid ---- */
   const fluid = has('hf') ? '1.5 – 2.0 ลิตร/วัน' : null;
@@ -517,6 +878,8 @@ function buildPlan(p,c){
     if(c.noac) nut.push(`<b>ผู้ทานยากลุ่ม NOAC/DOAC</b> กินผักใบเขียวได้ตามปกติ (ไม่ต้องคุมวิตามิน K) แต่ต้องกินยาให้ตรงเวลาทุกวัน ห้ามลืม/หยุดเอง`);
   }
   if(has('ckd')) nut.push(`<b>โรคไตเรื้อรัง</b> จำกัดอาหารโพแทสเซียมสูง (กล้วย ส้ม มะละกอ มะเขือเทศ ฟักทอง มันฝรั่ง ทุเรียน) และฟอสฟอรัสสูง (เครื่องในสัตว์ ไข่แดง นม ถั่วเมล็ดแห้ง น้ำอัดลมสีเข้ม) · ลวกผักทิ้งน้ำก่อนปรุงเพื่อลดโพแทสเซียม · เลี่ยงยาแก้ปวด NSAIDs`);
+  if(has('cir')) nut.push(`<b>โรคตับแข็ง</b> กินโปรตีนให้พอ (ห้ามอดโปรตีนเองยกเว้นแพทย์สั่งกรณีสับสนซึม) · แบ่งกินเป็นมื้อย่อย 4–6 มื้อ และเพิ่ม<b>มื้อว่างก่อนนอน</b> (เช่น ขนมปัง/กล้วย/นม) เพื่อกันกล้ามเนื้อสลาย · <b>งดแอลกอฮอล์ 100%</b> · เลี่ยงอาหารทะเลดิบ/สุกๆ ดิบๆ และของหมักดอง${c.ascites?' · ลดเค็มเข้มงวดเพราะมีท้องมาน':''}`);
+  if(has('htg')) nut.push(`<b>ไตรกลีเซอไรด์สูง</b> <b>งดแอลกอฮอล์</b> และงดน้ำตาล/น้ำหวาน/แป้งขัดสีเด็ดขาด · เพิ่มปลาทะเล/โอเมก้า-3 · ลดน้ำหนักหากเกินเกณฑ์${c.tgSevere?' · <b>TG สูงมาก (>500): ลดไขมันรวมให้ต่ำมากเพื่อป้องกันตับอ่อนอักเสบ</b> และพบแพทย์โดยเร็ว':''}`);
   if(weightLoss) nut.push(`<b>ควบคุมน้ำหนัก</b> สร้างพลังงานติดลบราว 500 kcal/วัน · เพิ่มโปรตีนและผักให้อิ่มนาน · กินช้าๆ เคี้ยวให้ละเอียด`);
 
   /* ---- Detailed food reference ---- */
@@ -548,8 +911,8 @@ function buildPlan(p,c){
 
   // potassium salt substitute advice
   let saltSub=null;
-  if(has('ckd')||has('hf'))
-    saltSub={kind:'avoid', text:'<b>ไม่แนะนำให้ใช้เกลือโพแทสเซียม (เกลือสูตรลดโซเดียม)</b> ในผู้ป่วยโรคไตหรือหัวใจล้มเหลว เพราะเสี่ยงโพแทสเซียมในเลือดสูงจนหัวใจเต้นผิดจังหวะอันตราย — ใช้วิธีลดเกลือ/น้ำปลาและปรุงเองด้วยสมุนไพร (ตะไคร้ ข่า มะนาว พริกไทย) แทน'};
+  if(has('ckd')||has('hf')||has('cir'))
+    saltSub={kind:'avoid', text:'<b>ไม่แนะนำให้ใช้เกลือโพแทสเซียม (เกลือสูตรลดโซเดียม)</b> ในผู้ป่วยโรคไต หัวใจล้มเหลว หรือตับแข็ง (ที่มักได้ยาขับปัสสาวะเก็บโพแทสเซียม) เพราะเสี่ยงโพแทสเซียมในเลือดสูงจนหัวใจเต้นผิดจังหวะอันตราย — ใช้วิธีลดเกลือ/น้ำปลาและปรุงเองด้วยสมุนไพร (ตะไคร้ ข่า มะนาว พริกไทย) แทน'};
   else if(has('ht'))
     saltSub={kind:'ok', text:'เกลือโพแทสเซียม (เกลือสูตรลดโซเดียม) อาจช่วยลดความดันได้ และใช้แทนเกลือปกติได้ในบางราย <b>แต่ควรปรึกษาแพทย์ก่อน</b> โดยเฉพาะถ้าทานยาความดันกลุ่ม ACEI/ARB หรือยาขับปัสสาวะชนิดเก็บโพแทสเซียม เพราะอาจทำให้โพแทสเซียมสูงเกินไป'};
 
@@ -605,17 +968,26 @@ function buildPlan(p,c){
   if(has('dlp')) med.add('ทานยาลดไขมันสม่ำเสมอ และตรวจระดับไขมันตามนัด');
   if(has('ob')) med.add('ตั้งเป้าลดน้ำหนัก 5–10% ภายใน 3–6 เดือน อย่างค่อยเป็นค่อยไป');
   if(has('ckd')) med.add('หลีกเลี่ยงยาแก้ปวด NSAIDs · ตรวจ eGFR และโพแทสเซียมตามนัด');
+  if(has('cir')){
+    med.add('งดแอลกอฮอล์เด็ดขาด · เลี่ยงยาที่เป็นพิษต่อตับ · พาราเซตามอลไม่เกิน 2 กรัม/วัน และเลี่ยง NSAIDs');
+    med.add('สังเกตอาการเตือน: ตัว/ตาเหลืองมากขึ้น ท้องโตเร็ว ขาบวม ซึมสับสน หรืออาเจียน/ถ่ายเป็นเลือด — รีบพบแพทย์');
+  }
+  if(has('htg')) med.add(c.tgSevere?'ไตรกลีเซอไรด์สูงมาก: เสี่ยงตับอ่อนอักเสบ ควบคุมอาหารเข้มงวดและพบแพทย์เพื่อพิจารณายาโดยเร็ว':'ทานยาลดไตรกลีเซอไรด์ตามแพทย์สั่ง และตรวจระดับไขมันตามนัด');
   if(p.smoke==='yes'||has('acs')) med.add('งดสูบบุหรี่ 100% และหลีกเลี่ยงควันบุหรี่มือสอง');
 
   /* ---- Vaccines ---- */
   const vacc=[];
   vacc.push(['💉','ไข้หวัดใหญ่ (Influenza)','ฉีดทุกปี — ลดการกำเริบของโรคหัวใจ']);
-  if(established||has('dm')||has('ckd')||p.age>=65)
-    vacc.push(['🫁','ปอดอักเสบ (Pneumococcal · PCV20)','สำหรับผู้มีโรคหัวใจเรื้อรัง/เบาหวาน/ไต หรืออายุ ≥ 65 ปี']);
+  if(established||has('dm')||has('ckd')||has('cir')||p.age>=65)
+    vacc.push(['🫁','ปอดอักเสบ (Pneumococcal · PCV20)','สำหรับผู้มีโรคหัวใจเรื้อรัง/เบาหวาน/ไต/ตับ หรืออายุ ≥ 65 ปี']);
   if(has('acs')||has('hf')||p.age>=60)
     vacc.push(['🦠','COVID-19','ตามเข็มกระตุ้นที่แนะนำในกลุ่มเสี่ยง']);
   if(p.age>=75 || (p.age>=60 && (has('hf')||has('ccs')||has('acs')||has('dm')||has('ckd'))))
     vacc.push(['🌬️','RSV','แนะนำในผู้สูงอายุ ≥ 60–75 ปี ที่มีโรคหัวใจ/ปอด/เบาหวาน']);
+  if(has('cir')){
+    vacc.push(['🟠','ไวรัสตับอักเสบ เอ (Hepatitis A)','แนะนำในผู้ป่วยโรคตับเรื้อรัง']);
+    vacc.push(['🔵','ไวรัสตับอักเสบ บี (Hepatitis B)','แนะนำในผู้ป่วยโรคตับเรื้อรัง (หากยังไม่มีภูมิ)']);
+  }
   vacc.push(['🩹','คอตีบ-บาดทะยัก-ไอกรน (Tdap/Td)', has('dm')?'กระตุ้นทุก 10 ปี · สำคัญมากหากมีแผลเบาหวาน':'กระตุ้นทุก 10 ปี']);
   if(p.age>=50) vacc.push(['🎯','งูสวัด (Shingrix)','แนะนำในผู้อายุ ≥ 50 ปี']);
 
@@ -625,17 +997,32 @@ function buildPlan(p,c){
     flags.push('มีทั้งภาวะที่ต้องการโปรตีนสูงและโรคไตเรื้อรัง — แผนนี้เลือก<b>จำกัดโปรตีนเพื่อถนอมไตเป็นหลัก</b> ควรให้แพทย์/นักกำหนดอาหารปรับตามค่า eGFR จริง');
   if(has('ckd') && has('ht'))
     flags.push('ความดันสูงร่วมกับโรคไต — เน้นลดโซเดียมแต่ <b>ไม่เพิ่มโพแทสเซียม</b> โดยไม่ปรึกษาแพทย์');
+  if(has('cir') && has('ckd'))
+    flags.push('ตับแข็งต้องการโปรตีนเพียงพอ แต่โรคไตต้องจำกัดโปรตีน — เป็นภาวะที่ขัดแย้งกัน <b>ต้องให้แพทย์/นักกำหนดอาหารกำหนดปริมาณเฉพาะราย</b>');
+
+  /* ---- Monthly goal (levels) ---- */
+  const gd=g?g.diet:1, ge=g?g.ex:1;
+  const goal={
+    dietLv:gd, exLv:ge,
+    dietText:dietLadder[gd-1], exText:exLadder[ge-1],
+    dietNext:gd<20?dietLadder[gd]:null, exNext:ge<20?exLadder[ge]:null,
+    focus:focusTips(c),
+    hrCaution:(acsEarly||has('hf')||vhdPostEarly||(vhdPreop&&c.severeAS))
+      ? `ออกกำลังกายต้องไม่เกินโซนหัวใจเป้าหมายของคุณ (${hrLo}–${hrHi} ครั้ง/นาที) ไม่ว่าจะอยู่ Level ใด`
+      : ''
+  };
 
   return {bmi,bmiStatus,idealLo,idealHi,proteinG,pLo,pHi,pBasisTxt,pNote,
     tdee,kcalTarget,kcalNote,naTxt,fluid,hrLo,hrHi,zoneLabel,bpTarget,bpNote,
     nut,proteinFoods,veg,fruitOk,fruitLimit,oilOk,oilAvoid,oilNote,sugaryNote,saltSub,
-    ex,med:[...med],vacc,flags,maxHR};
+    ex,med:[...med],vacc,flags,maxHR,goal,track,lab,labTrack};
 }
 
 /* ---------- render ---------- */
 function condBadges(c){
   const map={acs:'ACS (หลอดเลือดหัวใจเฉียบพลัน)',ccs:'CCS (หลอดเลือดหัวใจเรื้อรัง)',hf:'หัวใจล้มเหลว',
-    af:'หัวใจเต้นผิดจังหวะ',vhd:'โรคลิ้นหัวใจ',dm:'เบาหวาน',ht:'ความดันสูง',dlp:'ไขมันสูง',ob:'น้ำหนักเกิน/อ้วน',ckd:'โรคไตเรื้อรัง'};
+    af:'หัวใจเต้นผิดจังหวะ',vhd:'โรคลิ้นหัวใจ',dm:'เบาหวาน',ht:'ความดันสูง',dlp:'ไขมันสูง',ob:'น้ำหนักเกิน/อ้วน',
+    ckd:'โรคไตเรื้อรัง',cir:'ตับแข็ง',htg:'ไตรกลีเซอไรด์สูง'};
   return Object.keys(map).filter(k=>c[k]).map(k=>map[k]).join(' · ')||'การป้องกันโรคหัวใจทั่วไป';
 }
 
@@ -644,6 +1031,33 @@ function render(p,c,r){
   const liList=arr=>arr.map(x=>`<li>${x}</li>`).join('');
   const vaccHtml=r.vacc.map(v=>`<div class="v"><div class="vi">${v[0]}</div><div><div class="vt">${v[1]}</div><div class="vd">${v[2]}</div></div></div>`).join('');
   const flagHtml=r.flags.map(f=>`<div class="flag"><b>⚠ ข้อควรพิจารณา:</b> ${f}</div>`).join('');
+  const lvbar=(cur)=>{let s='';for(let i=1;i<=20;i++){s+=`<span class="${i<cur?'done':i===cur?'cur':''}"></span>`;}return s;};
+  const tasks=(arr)=>`<ul class="tasklist"><li>${arr[0]}</li><li>${arr[1]}</li></ul>`;
+  const goalFocusHtml=r.goal.focus.length?`<div class="goalfocus"><div class="subh">โฟกัสเฉพาะโรคของคุณเดือนนี้</div><ul class="rl">${liList(r.goal.focus)}</ul></div>`:'';
+  const bl=v=>(v===undefined||v===null||v==='')?'<span style="color:var(--faint)">–</span>':v;
+  const fmtD=d=>{ if(!d)return '–'; const a=d.split('-'); return a.length===3?`${a[2]}/${a[1]}/${a[0].slice(2)}`:d; };
+  // transposed table: parameters as rows (Y), dates as columns (X). entries are newest-first.
+  function transTable(entries,rowDefs,emptyMsg,maxCols=6){
+    const recent=(entries||[]).slice(0,maxCols).reverse(); // show oldest→newest left→right
+    if(!recent.length) return `<div class="trk-empty">${emptyMsg}</div>`;
+    const head=`<tr><th>รายการ</th>${recent.map(e=>`<th>${fmtD(e.d)}</th>`).join('')}</tr>`;
+    const body=rowDefs.map(([label,fn])=>`<tr><td>${label}</td>${recent.map(e=>`<td>${fn(e)}</td>`).join('')}</tr>`).join('');
+    return `<table class="trk-report trk-trans"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+  }
+  const vitalsTable=transTable(r.track,[
+    ['ความดัน (SBP/DBP)', e=>(e.sb||e.db)?`${e.sb||'–'}/${e.db||'–'}`:'<span style="color:var(--faint)">–</span>'],
+    ['ชีพจร (ครั้ง/นาที)', e=>bl(e.hr)],
+    ['น้ำหนัก (กก.)', e=>bl(e.wt)]
+  ],'— ยังไม่มีข้อมูลบันทึก —');
+  const labsTable=transTable(r.labTrack,[
+    ['FBS (mg/dL)', e=>bl(e.fbs)],
+    ['HbA1c (%)', e=>bl(e.a1c)],
+    ['Cr (mg/dL)', e=>bl(e.cr)],
+    ['TC (mg/dL)', e=>bl(e.tc)],
+    ['TG (mg/dL)', e=>bl(e.tg)],
+    ['HDL (mg/dL)', e=>bl(e.hdl)],
+    ['LDL (mg/dL)', e=>bl(e.ldl)]
+  ],'— ยังไม่มีผลแล็บบันทึก —');
 
   $('#sheet').innerHTML=`
   <div class="rep-top">
@@ -659,7 +1073,7 @@ function render(p,c,r){
   </div>
 
   <div class="rep-meta">
-    <div class="m"><div class="lbl">ผู้รับบริการ</div><div class="val">${p.name}</div></div>
+    <div class="m"><div class="lbl">ผู้รับบริการ</div><div class="val">${p.name}${p.hn?' · HN '+p.hn:''}</div></div>
     <div class="m"><div class="lbl">อายุ / เพศ</div><div class="val">${p.age} ปี · ${p.sex==='male'?'ชาย':'หญิง'}</div></div>
     <div class="m"><div class="lbl">น้ำหนัก / ส่วนสูง</div><div class="val">${p.wt} กก. · ${p.ht} ซม.</div></div>
     <div class="m"><div class="lbl">วันที่ออกรายงาน</div><div class="val">${dateStr}</div></div>
@@ -705,6 +1119,28 @@ function render(p,c,r){
     </div>
 
     ${flagHtml}
+
+    <div class="sec sec-goal">
+      <div class="sec-h"><span class="dot"></span><h3>เป้าหมายของเดือนนี้</h3><span class="en">THIS MONTH · LEVEL ${r.goal.dietLv}/${r.goal.exLv}</span></div>
+      <div class="goalrow">
+        <div class="goalcard">
+          <div class="gtop"><span class="gttl">🥗 ด้านอาหาร</span><span class="glv"><b>${r.goal.dietLv}</b>/20</span></div>
+          <div class="lvbar">${lvbar(r.goal.dietLv)}</div>
+          <div class="goaltext" contenteditable="true">${tasks(r.goal.dietText)}</div>
+          <div class="editmark">✎ คลิกเพื่อแก้ไขข้อความได้</div>
+          ${r.goal.dietNext?`<div class="goalnext"><b>เป้าหมายถัดไป (Lv ${r.goal.dietLv+1}):</b> ${r.goal.dietNext.join(' · ')}</div>`:'<div class="goalnext"><b>ถึงระดับสูงสุดแล้ว 🎉</b> รักษาให้สม่ำเสมอ</div>'}
+        </div>
+        <div class="goalcard">
+          <div class="gtop"><span class="gttl">🏃 ออกกำลังกาย</span><span class="glv"><b>${r.goal.exLv}</b>/20</span></div>
+          <div class="lvbar">${lvbar(r.goal.exLv)}</div>
+          <div class="goaltext" contenteditable="true">${tasks(r.goal.exText)}</div>
+          <div class="editmark">✎ คลิกเพื่อแก้ไขข้อความได้</div>
+          ${r.goal.exNext?`<div class="goalnext"><b>เป้าหมายถัดไป (Lv ${r.goal.exLv+1}):</b> ${r.goal.exNext.join(' · ')}</div>`:'<div class="goalnext"><b>ถึงระดับสูงสุดแล้ว 🎉</b> รักษาให้สม่ำเสมอ</div>'}
+        </div>
+      </div>
+      ${r.goal.hrCaution?`<div class="flag"><b>⚠ ความปลอดภัย:</b> ${r.goal.hrCaution}</div>`:''}
+      ${goalFocusHtml}
+    </div>
 
     <div class="sec">
       <div class="sec-h"><span class="dot"></span><h3>โภชนาการ</h3><span class="en">NUTRITION</span></div>
@@ -765,6 +1201,17 @@ function render(p,c,r){
       </ul>
     </div>
 
+    <div class="sec sec-track">
+      <div class="sec-h"><span class="dot"></span><h3>ตารางติดตามค่า (ย้อนหลัง)</h3><span class="en">TRENDS · BP · HR · WEIGHT · LABS</span></div>
+      <div class="subh">สัญญาณชีพ</div>
+      <div class="trk-wrap">${vitalsTable}</div>
+      <div class="trk-note">เป้าหมายความดันที่บ้าน: ${r.bpTarget} มม.ปรอท · ชีพจรขณะพักปกติ 60–100 ครั้ง/นาที</div>
+
+      <div class="subh" style="margin-top:18px">ผลแล็บ</div>
+      <div class="trk-wrap">${labsTable}</div>
+      <div class="trk-note">นำค่ามาให้แพทย์ดูทุกครั้งที่นัด · แสดงผลล่าสุดสูงสุด 6 ครั้ง (เรียงเก่า → ใหม่)</div>
+    </div>
+
     <div class="rep-foot">
       <div class="disc">เอกสารนี้เป็นคำแนะนำทั่วไปที่คำนวณจากข้อมูลที่กรอกและอ้างอิงแนวทาง ACC/AHA, ESC, ADA และแนวทางเวชปฏิบัติของไทย เพื่อใช้ประกอบการดูแลตนเอง ไม่ทดแทนการวินิจฉัยและคำสั่งการรักษาของแพทย์ผู้ดูแล กรุณาปรับเป้าหมายโปรตีน/โซเดียม/โพแทสเซียม/ระดับการออกกำลังกายตามผลตรวจจริงและคำแนะนำของแพทย์เฉพาะราย</div>
       <div class="sig">
@@ -775,9 +1222,124 @@ function render(p,c,r){
   </div>`;
 }
 
+/* ---------- Firebase (save/load by HN) ---------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyDn3eS9YIQFkOMqTK-4T1u6rtLEeH-Vdug",
+  authDomain: "clinic-personalized-medicine.firebaseapp.com",
+  projectId: "clinic-personalized-medicine",
+  storageBucket: "clinic-personalized-medicine.firebasestorage.app",
+  messagingSenderId: "1071693834762",
+  appId: "1:1071693834762:web:51e2a677d5c0104e464df3",
+  measurementId: "G-2SGF1C4RFP"
+};
+let db=null;
+try{ if(window.firebase){ firebase.initializeApp(firebaseConfig); db=firebase.firestore(); } }
+catch(e){ console.warn('Firebase init failed',e); }
+
+function dbMsg(text,kind){
+  const m=$('#dbMsg'); m.textContent=text;
+  m.className='dbmsg show '+(kind||'ok');
+  if(kind==='ok') setTimeout(()=>{m.className='dbmsg';},4000);
+}
+
+// gather profile/conditions/levels (NOT tracking — histories are merged at save time)
+function getProfile(){
+  const val=id=>$(id).value;
+  const st={ hn:val('#hn').trim(), name:val('#name'), sex:val('#sex'),
+    age:val('#age'), wt:val('#wt'), ht:val('#ht'), sbp:val('#sbp'), dbp:val('#dbp'),
+    rhr:val('#rhr'), act:val('#act'), smoke:val('#smoke'),
+    labs:{ fbs:val('#lab_fbs'),a1c:val('#lab_a1c'),cr:val('#lab_cr'),tc:val('#lab_tc'),tg:val('#lab_tg'),hdl:val('#lab_hdl'),ldl:val('#lab_ldl') },
+    levels:{ diet:val('#dietLv'), ex:val('#exLv') },
+    conditions:{},
+    updatedAt:new Date().toISOString()
+  };
+  document.querySelectorAll('.cond').forEach(el=>{
+    st.conditions[el.dataset.k]=el.querySelector('input[type=checkbox]').checked;
+  });
+  st.sub={ acsPhase:document.querySelector('input[name=acsPhase]:checked')?.value||'early',
+    vhdStatus:document.querySelector('input[name=vhdStatus]:checked')?.value||'preop',
+    severeAS:document.querySelector('input[name=severeAS]')?.checked||false,
+    warfarin:document.querySelector('input[name=warfarin]')?.checked||false,
+    noac:document.querySelector('input[name=noac]')?.checked||false,
+    ascites:document.querySelector('input[name=ascites]')?.checked||false,
+    tgSevere:document.querySelector('input[name=tgSevere]')?.checked||false };
+  return st;
+}
+
+// repopulate form from saved state
+function setState(st){
+  const set=(id,v)=>{ if(v!==undefined&&v!==null) $(id).value=v; };
+  set('#name',st.name); set('#sex',st.sex); set('#age',st.age); set('#wt',st.wt);
+  set('#ht',st.ht); set('#sbp',st.sbp); set('#dbp',st.dbp); set('#rhr',st.rhr);
+  set('#act',st.act); set('#smoke',st.smoke);
+  if(st.labs){ set('#lab_fbs',st.labs.fbs);set('#lab_a1c',st.labs.a1c);set('#lab_cr',st.labs.cr);
+    set('#lab_tc',st.labs.tc);set('#lab_tg',st.labs.tg);set('#lab_hdl',st.labs.hdl);set('#lab_ldl',st.labs.ldl); }
+  if(st.levels){ set('#dietLv',st.levels.diet||1); set('#exLv',st.levels.ex||1); $('#dietLv').dispatchEvent(new Event('change')); }
+  // conditions
+  document.querySelectorAll('.cond').forEach(el=>{
+    const on=st.conditions&&st.conditions[el.dataset.k];
+    const cb=el.querySelector('input[type=checkbox]'); cb.checked=!!on;
+    el.classList.toggle('on',!!on); const ex=el.querySelector('.extra'); if(ex) ex.classList.toggle('show',!!on);
+  });
+  if(st.sub){
+    const r=(n,v)=>{const el=document.querySelector(`input[name=${n}][value="${v}"]`); if(el) el.checked=true;};
+    r('acsPhase',st.sub.acsPhase); r('vhdStatus',st.sub.vhdStatus);
+    const ck=(n,v)=>{const el=document.querySelector(`input[name=${n}]`); if(el) el.checked=!!v;};
+    ck('severeAS',st.sub.severeAS); ck('warfarin',st.sub.warfarin); ck('noac',st.sub.noac);
+    ck('ascites',st.sub.ascites); ck('tgSevere',st.sub.tgSevere);
+  }
+  // cumulative tables (support old 'vitals/labTable' and new 'vitalsHistory/labsHistory')
+  renderVitalsRows(st.vitalsHistory||st.vitals||[]);
+  renderLabsRows(st.labsHistory||st.labTable||[]);
+}
+
+$('#saveBtn').addEventListener('click',async()=>{
+  const hn=$('#hn').value.trim();
+  if(!hn){ dbMsg('กรุณากรอก HN ก่อนบันทึก','err'); $('#hn').focus(); return; }
+  if(!db){ dbMsg('เชื่อมต่อฐานข้อมูลไม่ได้ — ตรวจสอบอินเทอร์เน็ต','err'); return; }
+  const btn=$('#saveBtn'); btn.disabled=true; const old=btn.textContent; btn.textContent='⏳ กำลังบันทึก...';
+  try{
+    const ref=db.collection('patients').doc(hn);
+    const prev=await ref.get();
+    const pd=prev.exists?prev.data():{};
+    // start from existing history, merge any manual rows in the tables, then auto-insert today's visit
+    let vH=(pd.vitalsHistory||pd.vitals||[]).slice();
+    let lH=(pd.labsHistory||pd.labTable||[]).slice();
+    readVitalsTable().forEach(e=>{ vH=upsertByDate(vH,e,VITAL_F); });
+    readLabsTable().forEach(e=>{ lH=upsertByDate(lH,e,LAB_F); });
+    const td=todayStr(), n=v=>(v===''||v===undefined||isNaN(v))?'':String(v);
+    vH=upsertByDate(vH,{d:td,sb:n($('#sbp').value),db:n($('#dbp').value),hr:n($('#rhr').value),wt:n($('#wt').value)},VITAL_F);
+    lH=upsertByDate(lH,{d:td,fbs:$('#lab_fbs').value,a1c:$('#lab_a1c').value,cr:$('#lab_cr').value,
+      tc:$('#lab_tc').value,tg:$('#lab_tg').value,hdl:$('#lab_hdl').value,ldl:$('#lab_ldl').value},LAB_F);
+
+    const state=getProfile();
+    state.vitalsHistory=vH; state.labsHistory=lH;
+    await ref.set(state);
+    renderVitalsRows(vH); renderLabsRows(lH);   // reflect accumulated history immediately
+    dbMsg('✓ บันทึก HN '+hn+' แล้ว — เพิ่มค่าวันนี้ลงประวัติเรียบร้อย (มีทั้งหมด '+vH.length+' ครั้ง)','ok');
+  }catch(e){ console.error(e); dbMsg('บันทึกไม่สำเร็จ: '+e.message,'err'); }
+  finally{ btn.disabled=false; btn.textContent=old; }
+});
+
+$('#loadBtn').addEventListener('click',async()=>{
+  const hn=$('#hn').value.trim();
+  const st=$('#hnStatus');
+  if(!hn){ st.textContent='กรุณากรอก HN'; st.className='hnstatus err'; return; }
+  if(!db){ st.textContent='เชื่อมต่อฐานข้อมูลไม่ได้'; st.className='hnstatus err'; return; }
+  st.textContent='⏳ กำลังค้นหา...'; st.className='hnstatus';
+  try{
+    const doc=await db.collection('patients').doc(hn).get();
+    if(!doc.exists){ st.textContent='ไม่พบข้อมูล HN นี้ (เริ่มบันทึกใหม่ได้)'; st.className='hnstatus err'; return; }
+    setState(doc.data());
+    const n=(doc.data().vitalsHistory||doc.data().vitals||[]).length;
+    const u=doc.data().updatedAt? new Date(doc.data().updatedAt).toLocaleString('th-TH'):'';
+    st.textContent='✓ ดึงข้อมูลแล้ว — มีประวัติ '+n+' ครั้ง'+(u?' (ล่าสุด '+u+')':''); st.className='hnstatus ok';
+  }catch(e){ console.error(e); st.textContent='ดึงข้อมูลไม่สำเร็จ: '+e.message; st.className='hnstatus err'; }
+});
+
 /* ---------- events ---------- */
 $('#genBtn').addEventListener('click',()=>{
-  const {p,c}=readForm();
+  const {p,c,g,track,lab,labTrack}=readForm();
   const errs=validate(p);
   const box=$('#alertBox');
   if(errs.length){
@@ -786,7 +1348,7 @@ $('#genBtn').addEventListener('click',()=>{
     return;
   }
   box.classList.remove('show');
-  const r=buildPlan(p,c);
+  const r=buildPlan(p,c,g,track,lab,labTrack);
   render(p,c,r);
   document.querySelector('.stack').style.display='none';
   document.querySelector('.app-head').style.display='none';
@@ -801,13 +1363,26 @@ $('#editBtn').addEventListener('click',()=>{
   window.scrollTo({top:0,behavior:'smooth'});
 });
 
-$('#printBtn').addEventListener('click',()=>window.print());
+// scoped printing
+document.querySelectorAll('[data-print]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const mode=btn.dataset.print;
+    document.body.classList.remove('print-goal','print-track');
+    if(mode==='goal') document.body.classList.add('print-goal');
+    else if(mode==='track') document.body.classList.add('print-track');
+    window.print();
+  });
+});
+window.addEventListener('afterprint',()=>document.body.classList.remove('print-goal','print-track'));
 
 $('#resetBtn').addEventListener('click',()=>{
   document.querySelectorAll('input[type=text],input[type=number]').forEach(i=>i.value='');
   document.querySelectorAll('.cond input[type=checkbox]').forEach(cb=>{cb.checked=false;});
   document.querySelectorAll('.cond').forEach(c=>{c.classList.remove('on');const e=c.querySelector('.extra');if(e)e.classList.remove('show');});
-  $('#alertBox').classList.remove('show');
+  document.querySelectorAll('input[name=ascites],input[name=tgSevere],input[name=warfarin],input[name=noac],input[name=severeAS]').forEach(cb=>cb.checked=false);
+  $('#dietLv').value=1; $('#exLv').value=1; $('#dietLv').dispatchEvent(new Event('change'));
+  renderVitalsRows([]); renderLabsRows([]);
+  $('#alertBox').classList.remove('show'); $('#dbMsg').className='dbmsg'; $('#hnStatus').textContent='';
 });
 </script>
 </body>
