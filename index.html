@@ -407,13 +407,23 @@ table.trk-trans tbody tr:nth-child(even) td:first-child{background:var(--teal-mi
         <div class="lab-sec">
           <div class="lab-h">ผลแล็บครั้งนี้ <span>(ไม่บังคับ — เว้นว่างได้)</span></div>
           <div class="grid g3 lab-grid">
+            <div class="field" style="grid-column:1/-1"><label>📅 วันที่ตรวจ</label><input type="date" id="visitDate"></div>
             <div class="field"><label>FBS <span class="unit">(mg/dL)</span></label><input type="number" id="lab_fbs" step="0.1" placeholder="–"></div>
             <div class="field"><label>HbA1c <span class="unit">(%)</span></label><input type="number" id="lab_a1c" step="0.1" placeholder="–"></div>
             <div class="field"><label>Cr <span class="unit">(mg/dL)</span></label><input type="number" id="lab_cr" step="0.01" placeholder="–"></div>
+            <div class="field" style="grid-column:1/-1"><div id="cpEgfrBox" style="border:1px solid #E2E8F0;border-radius:9px;padding:8px 12px;background:#F8FAFC;font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span style="color:#64748B">eGFR (CKD-EPI 2021): กรอก Cr, เพศ และอายุ</span></div></div>
             <div class="field"><label>TC <span class="unit">(mg/dL)</span></label><input type="number" id="lab_tc" step="1" placeholder="–"></div>
             <div class="field"><label>TG <span class="unit">(mg/dL)</span></label><input type="number" id="lab_tg" step="1" placeholder="–"></div>
             <div class="field"><label>HDL <span class="unit">(mg/dL)</span></label><input type="number" id="lab_hdl" step="1" placeholder="–"></div>
             <div class="field"><label>LDL <span class="unit">(mg/dL)</span></label><input type="number" id="lab_ldl" step="1" placeholder="–"></div>
+
+            <div class="field" style="grid-column:1/-1;margin-top:2px"><div style="font-weight:700;color:#0F172A;font-size:12px;border-top:1px dashed #E2E8F0;padding-top:7px">🩸 ความสมบูรณ์เม็ดเลือด (CBC)</div></div>
+            <div class="field"><label>WBC <span class="unit">(×10³/µL)</span></label><input type="number" id="lab_wbc" step="0.1" placeholder="–"></div>
+            <div class="field"><label>Platelet <span class="unit">(×10³/µL)</span></label><input type="number" id="lab_plt" step="1" placeholder="–"></div>
+
+            <div class="field" style="grid-column:1/-1;margin-top:2px"><div style="font-weight:700;color:#0F172A;font-size:12px;border-top:1px dashed #E2E8F0;padding-top:7px">🦋 ฮอร์โมนไทรอยด์ (Thyroid)</div></div>
+            <div class="field"><label>FT4 <span class="unit">(ng/dL)</span></label><input type="number" id="lab_ft4" step="0.01" placeholder="–"></div>
+            <div class="field"><label>T3 <span class="unit">(ng/dL)</span></label><input type="number" id="lab_t3" step="1" placeholder="–"></div>
           </div>
         </div>
       </div>
@@ -498,6 +508,31 @@ table.trk-trans tbody tr:nth-child(even) td:first-child{background:var(--teal-mi
         </div>
       </div>
     </div>
+
+    <!-- ===== Vaccines: manual record ===== -->
+    <div class="card">
+      <div class="card-head"><div class="step" style="font-size:1.05rem;background:var(--teal)">💉</div>
+        <div><h2>วัคซีน (บันทึกการได้รับ)</h2><p>เลือกสถานะและวันที่ฉีดของแต่ละวัคซีน — จะไปแสดงในสมุดวัคซีนของคนไข้</p></div>
+      </div>
+      <div class="card-body">
+        <div id="vaxGridB" class="vaxb-grid"></div>
+      </div>
+    </div>
+    <style>
+    .vaxb-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    @media(max-width:640px){.vaxb-grid{grid-template-columns:1fr}}
+    .vaxb-item{border:1px solid var(--line);border-radius:14px;padding:13px 14px;background:var(--paper)}
+    .vaxb-item .vnm{font-weight:700;font-size:.92rem;color:var(--teal-deep)}
+    .vaxb-item .vage{font-size:.74rem;color:var(--faint);margin:2px 0 10px;line-height:1.3}
+    .vaxb-row{display:grid;grid-template-columns:1.15fr 1fr;gap:8px}
+    .vaxb-row select,.vaxb-row input{width:100%}
+    .vaxb-doses{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+    .vaxb-doses .vd{display:flex;flex-direction:column;gap:2px;font-size:.7rem;color:var(--faint);font-weight:600}
+    .vaxb-hint{margin-top:7px;font-size:.78rem;line-height:1.35}
+    .vaxb-hint .vh-info{color:var(--faint)}
+    .vaxb-hint .vh-soon{color:#9a6a00;font-weight:600}
+    .vaxb-hint .vh-over{color:#c0392b;font-weight:700}
+    </style>
 
     <!-- ===== STEP 3: monthly goal levels ===== -->
     <div class="card">
@@ -671,7 +706,7 @@ function focusTips(c){
 
 /* ===== cumulative tracking helpers ===== */
 const VITAL_F=['sb','db','hr','wt'];
-const LAB_F=['fbs','a1c','cr','tc','tg','hdl','ldl'];
+const LAB_F=['fbs','a1c','cr','tc','tg','hdl','ldl','wbc','plt','ft4','t3'];
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function hasData(e,fields){return fields.some(k=>e[k]!==undefined&&e[k]!=='');}
 function mergeRow(base,add,fields){
@@ -704,7 +739,11 @@ function labRowHTML(e){e=e||{};
     `<td><input type="number" class="l-tc" placeholder="–" value="${e.tc||''}"></td>`+
     `<td><input type="number" class="l-tg" placeholder="–" value="${e.tg||''}"></td>`+
     `<td><input type="number" class="l-hdl" placeholder="–" value="${e.hdl||''}"></td>`+
-    `<td><input type="number" class="l-ldl" placeholder="–" value="${e.ldl||''}"></td></tr>`;
+    `<td><input type="number" class="l-ldl" placeholder="–" value="${e.ldl||''}"></td>`+
+    `<td><input type="number" step="0.1" class="l-wbc" placeholder="–" value="${e.wbc||''}"></td>`+
+    `<td><input type="number" class="l-plt" placeholder="–" value="${e.plt||''}"></td>`+
+    `<td><input type="number" step="0.01" class="l-ft4" placeholder="–" value="${e.ft4||''}"></td>`+
+    `<td><input type="number" class="l-t3" placeholder="–" value="${e.t3||''}"></td></tr>`;
 }
 
 /* transposed input tables: วันที่ = หัวคอลัมน์ (แกน X), ค่า = แถวซ้าย (แกน Y) */
@@ -712,7 +751,8 @@ const VITAL_CFG={dateCls:'t-date',minCols:5,params:[
   ['SBP','t-sbp','','sb'],['DBP','t-dbp','','db'],['ชีพจร','t-hr','','hr'],['น้ำหนัก (กก.)','t-wt','0.1','wt']]};
 const LAB_CFG={dateCls:'l-date',minCols:5,params:[
   ['FBS','l-fbs','0.1','fbs'],['HbA1c','l-a1c','0.1','a1c'],['Cr','l-cr','0.01','cr'],
-  ['TC','l-tc','','tc'],['TG','l-tg','','tg'],['HDL','l-hdl','','hdl'],['LDL','l-ldl','','ldl']]};
+  ['TC','l-tc','','tc'],['TG','l-tg','','tg'],['HDL','l-hdl','','hdl'],['LDL','l-ldl','','ldl'],
+  ['WBC','l-wbc','0.1','wbc'],['Plt','l-plt','','plt'],['FT4','l-ft4','0.01','ft4'],['T3','l-t3','','t3']]};
 function renderTransInput(tbodySel,data,cfg){
   data=data||[];
   const nCols=Math.max(data.length,cfg.minCols);
@@ -749,8 +789,58 @@ function readTransInput(tbodySel,cfg,fields){
 function readVitalsTable(){ return readTransInput('#trkBody',VITAL_CFG,VITAL_F); }
 function readLabsTable(){ return readTransInput('#labBody',LAB_CFG,LAB_F); }
 
+/* ===== Vaccines (manual record) — shared model: vaccines[id]={status,doses:[],date} ===== */
+const VACCINES_B=[
+  {id:'flu',     name:'ไข้หวัดใหญ่',           age:'ฉีดทุกปี — ลดการกำเริบของโรคหัวใจ', doses:1, repeat:12, repeatLabel:'ฉีดประจำปี', sched:'ฉีดซ้ำทุก 1 ปี'},
+  {id:'pcv20',   name:'ปอดอักเสบ (PCV20)',     age:'≥65 ปี หรือมีโรคหัวใจ/เบาหวาน/ไต/ตับ', doses:1, sched:'ฉีดครั้งเดียว'},
+  {id:'shingles',name:'งูสวัด (Shingrix)',     age:'อายุ ≥50 ปี · ฉีด 2 เข็ม', doses:2, gap:[2], sched:'เข็ม 2 ห่างเข็มแรก 2–6 เดือน'},
+  {id:'rsv',     name:'RSV',                   age:'≥75 ปี · 60–74 ปี ที่มีโรคหัวใจ/ปอด', doses:1, sched:'ฉีดครั้งเดียว'},
+  {id:'hepb',    name:'ไวรัสตับอักเสบ บี',     age:'โรคตับ/เบาหวาน/ไต ที่ยังไม่มีภูมิ', doses:3, gap:[1,5], sched:'ตาราง 0–1–6 เดือน (3 เข็ม)'},
+  {id:'tdap',    name:'คอตีบ-บาดทะยัก-ไอกรน',  age:'ผู้ใหญ่ — กระตุ้นทุก 10 ปี', doses:1, repeat:120, repeatLabel:'เข็มกระตุ้น', sched:'กระตุ้นทุก 10 ปี'},
+  {id:'hpv',     name:'HPV (9 สายพันธุ์)',      age:'9–26 ปี · 27–45 ปี รายบุคคล', doses:3, gap:[2,4], sched:'9 สายพันธุ์ · ตาราง 0–2–6 เดือน (3 เข็ม)'},
+];
+function vaxAddMonths(iso,m){const d=new Date(iso+'T00:00:00');if(isNaN(d))return null;d.setMonth(d.getMonth()+m);return d;}
+function vaxThai(d){const M=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];return d.getDate()+' '+M[d.getMonth()]+' '+String(d.getFullYear()+543).slice(-2);}
+function vaxNextDue(v,status,doses){
+  if(status==='na')return null;
+  const n=v.doses||1,filled=doses.filter(Boolean),fc=filled.length,today=new Date();today.setHours(0,0,0,0);
+  if(fc===0)return null;
+  if(fc<n){const gap=(v.gap&&v.gap[fc-1])||1,due=vaxAddMonths(filled[fc-1],gap);if(!due)return null;return{due,days:Math.round((due-today)/864e5),doseNo:fc+1,kind:'series'};}
+  if(v.repeat){const d2=vaxAddMonths(filled[fc-1],v.repeat);if(!d2)return null;return{due:d2,days:Math.round((d2-today)/864e5),doseNo:null,kind:'repeat'};}
+  return null;
+}
+function vaxHintTextB(v){
+  const status=$('#vaxB_status_'+v.id)?.value||'',n=v.doses||1,doses=[];
+  for(let i=0;i<n;i++)doses.push($('#vaxB_date_'+v.id+'_'+i)?.value||'');
+  const due=vaxNextDue(v,status,doses);
+  if(!due)return v.sched?`<span class="vh-info">📅 ${v.sched}</span>`:'';
+  const label=due.kind==='series'?`เข็มที่ ${due.doseNo}`:(v.repeatLabel||'เข็มถัดไป');
+  if(due.days<=0)return `<span class="vh-over">⏰ ถึงกำหนด${label}แล้ว · ครบกำหนด ${vaxThai(due.due)}</span>`;
+  if(due.days<=30)return `<span class="vh-soon">🔔 ใกล้กำหนด${label} — ${vaxThai(due.due)} (อีก ${due.days} วัน)</span>`;
+  return `<span class="vh-info">📅 ${label}: ${vaxThai(due.due)}</span>`;
+}
+function refreshVaxHintsB(){VACCINES_B.forEach(v=>{const el=document.getElementById('vaxhintB_'+v.id);if(el)el.innerHTML=vaxHintTextB(v);});}
+function renderVaxGridB(){
+  const g=document.getElementById('vaxGridB'); if(!g)return;
+  g.innerHTML=VACCINES_B.map(v=>{
+    const n=v.doses||1;let dates='';
+    for(let i=0;i<n;i++)dates+=`<label class="vd"><span>${n>1?('เข็ม '+(i+1)):'วันที่ฉีด'}</span><input type="date" id="vaxB_date_${v.id}_${i}"></label>`;
+    return `<div class="vaxb-item">
+      <div class="vnm">${v.name}</div><div class="vage">${v.age}</div>
+      <div class="vaxb-row"><select id="vaxB_status_${v.id}">
+        <option value="">ยังไม่ฉีด</option><option value="done">ฉีดแล้ว ✓</option><option value="partial">ฉีดบางส่วน</option><option value="plan">วางแผนฉีด</option><option value="na">ไม่จำเป็น</option>
+      </select></div>
+      <div class="vaxb-doses">${dates}</div>
+      <div class="vaxb-hint" id="vaxhintB_${v.id}"></div>
+    </div>`;
+  }).join('');
+  g.addEventListener('change',refreshVaxHintsB);
+  refreshVaxHintsB();
+}
+
 /* ===== init UI: level selects, tracking rows, live preview ===== */
 (function initUI(){
+  renderVaxGridB();
   const dl=$('#dietLv'), el=$('#exLv');
   for(let i=1;i<=20;i++){
     dl.insertAdjacentHTML('beforeend',`<option value="${i}">Level ${i}</option>`);
@@ -782,7 +872,8 @@ function readForm(){
   };
   // current-visit labs
   const lab={ fbs:get('#lab_fbs'), a1c:get('#lab_a1c'), cr:get('#lab_cr'),
-    tc:get('#lab_tc'), tg:get('#lab_tg'), hdl:get('#lab_hdl'), ldl:get('#lab_ldl') };
+    tc:get('#lab_tc'), tg:get('#lab_tg'), hdl:get('#lab_hdl'), ldl:get('#lab_ldl'),
+    wbc:get('#lab_wbc'), plt:get('#lab_plt'), ft4:get('#lab_ft4'), t3:get('#lab_t3') };
   const c={};
   document.querySelectorAll('.cond').forEach(el=>{
     if(el.querySelector('input[type=checkbox]').checked) c[el.dataset.k]=true;
@@ -799,12 +890,12 @@ function readForm(){
   const g={ diet:parseInt($('#dietLv').value)||1, ex:parseInt($('#exLv').value)||1 };
 
   // cumulative tracking: read tables, then auto-insert today's visit (for the report)
-  const td=todayStr();
+  var _vd=document.getElementById('visitDate'); const td=(_vd&&_vd.value)?_vd.value:todayStr();
   const numStr=v=>isNaN(v)?'':String(v);
   let track=readVitalsTable();
   track=upsertByDate(track,{d:td,sb:numStr(p.sbp),db:numStr(p.dbp),hr:numStr(p.rhr),wt:numStr(p.wt)},VITAL_F);
   let labTrack=readLabsTable();
-  labTrack=upsertByDate(labTrack,{d:td,fbs:lab.fbs,a1c:lab.a1c,cr:lab.cr,tc:lab.tc,tg:lab.tg,hdl:lab.hdl,ldl:lab.ldl},LAB_F);
+  labTrack=upsertByDate(labTrack,{d:td,fbs:lab.fbs,a1c:lab.a1c,cr:lab.cr,tc:lab.tc,tg:lab.tg,hdl:lab.hdl,ldl:lab.ldl,wbc:lab.wbc,plt:lab.plt,ft4:lab.ft4,t3:lab.t3},LAB_F);
 
   return {p,c,g,track,lab,labTrack};
 }
@@ -1106,7 +1197,11 @@ function render(p,c,r){
     ['TC (mg/dL)', e=>bl(e.tc)],
     ['TG (mg/dL)', e=>bl(e.tg)],
     ['HDL (mg/dL)', e=>bl(e.hdl)],
-    ['LDL (mg/dL)', e=>bl(e.ldl)]
+    ['LDL (mg/dL)', e=>bl(e.ldl)],
+    ['WBC (×10³/µL)', e=>bl(e.wbc)],
+    ['Platelet (×10³/µL)', e=>bl(e.plt)],
+    ['FT4 (ng/dL)', e=>bl(e.ft4)],
+    ['T3 (ng/dL)', e=>bl(e.t3)]
   ],'— ยังไม่มีผลแล็บบันทึก —');
 
   $('#sheet').innerHTML=`
@@ -1313,6 +1408,7 @@ function getProfile(){
     noac:document.querySelector('input[name=noac]')?.checked||false,
     ascites:document.querySelector('input[name=ascites]')?.checked||false,
     tgSevere:document.querySelector('input[name=tgSevere]')?.checked||false };
+  st.vaccines={}; VACCINES_B.forEach(v=>{ const n=v.doses||1,doses=[]; for(let i=0;i<n;i++)doses.push(val('#vaxB_date_'+v.id+'_'+i)); st.vaccines[v.id]={status:val('#vaxB_status_'+v.id),doses,date:doses[0]||''}; });
   return st;
 }
 
@@ -1323,7 +1419,8 @@ function setState(st){
   set('#ht',st.ht); set('#sbp',st.sbp); set('#dbp',st.dbp); set('#rhr',st.rhr);
   set('#act',st.act); set('#smoke',st.smoke);
   if(st.labs){ set('#lab_fbs',st.labs.fbs);set('#lab_a1c',st.labs.a1c);set('#lab_cr',st.labs.cr);
-    set('#lab_tc',st.labs.tc);set('#lab_tg',st.labs.tg);set('#lab_hdl',st.labs.hdl);set('#lab_ldl',st.labs.ldl); }
+    set('#lab_tc',st.labs.tc);set('#lab_tg',st.labs.tg);set('#lab_hdl',st.labs.hdl);set('#lab_ldl',st.labs.ldl);
+    set('#lab_wbc',st.labs.wbc);set('#lab_plt',st.labs.plt);set('#lab_ft4',st.labs.ft4);set('#lab_t3',st.labs.t3); }
   if(st.levels){ set('#dietLv',st.levels.diet||1); set('#exLv',st.levels.ex||1); $('#dietLv').dispatchEvent(new Event('change')); }
   // conditions
   document.querySelectorAll('.cond').forEach(el=>{
@@ -1338,6 +1435,9 @@ function setState(st){
     ck('severeAS',st.sub.severeAS); ck('warfarin',st.sub.warfarin); ck('noac',st.sub.noac);
     ck('ascites',st.sub.ascites); ck('tgSevere',st.sub.tgSevere);
   }
+  // vaccines
+  if(st.vaccines)VACCINES_B.forEach(v=>{const r=st.vaccines[v.id]||{};const sel=$('#vaxB_status_'+v.id);if(sel)sel.value=r.status||'';const doses=(r.doses&&r.doses.length)?r.doses:(r.date?[r.date]:[]);const n=v.doses||1;for(let i=0;i<n;i++){const d=$('#vaxB_date_'+v.id+'_'+i);if(d)d.value=doses[i]||'';}});
+  if(typeof refreshVaxHintsB==='function')refreshVaxHintsB();
   // cumulative tables (support old 'vitals/labTable' and new 'vitalsHistory/labsHistory')
   renderVitalsRows(st.vitalsHistory||st.vitals||[]);
   renderLabsRows(st.labsHistory||st.labTable||[]);
@@ -1357,10 +1457,11 @@ $('#saveBtn').addEventListener('click',async()=>{
     let lH=(pd.labsHistory||pd.labTable||[]).slice();
     readVitalsTable().forEach(e=>{ vH=upsertByDate(vH,e,VITAL_F); });
     readLabsTable().forEach(e=>{ lH=upsertByDate(lH,e,LAB_F); });
-    const td=todayStr(), n=v=>(v===''||v===undefined||isNaN(v))?'':String(v);
+    var _vd2=document.getElementById('visitDate'); const td=(_vd2&&_vd2.value)?_vd2.value:todayStr(), n=v=>(v===''||v===undefined||isNaN(v))?'':String(v);
     vH=upsertByDate(vH,{d:td,sb:n($('#sbp').value),db:n($('#dbp').value),hr:n($('#rhr').value),wt:n($('#wt').value)},VITAL_F);
     lH=upsertByDate(lH,{d:td,fbs:$('#lab_fbs').value,a1c:$('#lab_a1c').value,cr:$('#lab_cr').value,
-      tc:$('#lab_tc').value,tg:$('#lab_tg').value,hdl:$('#lab_hdl').value,ldl:$('#lab_ldl').value},LAB_F);
+      tc:$('#lab_tc').value,tg:$('#lab_tg').value,hdl:$('#lab_hdl').value,ldl:$('#lab_ldl').value,
+      wbc:$('#lab_wbc').value,plt:$('#lab_plt').value,ft4:$('#lab_ft4').value,t3:$('#lab_t3').value},LAB_F);
 
     const state=getProfile();
     state.vitalsHistory=vH; state.labsHistory=lH;
@@ -1513,9 +1614,53 @@ $('#resetBtn').addEventListener('click',()=>{
   document.querySelectorAll('.cond').forEach(c=>{c.classList.remove('on');const e=c.querySelector('.extra');if(e)e.classList.remove('show');});
   document.querySelectorAll('input[name=ascites],input[name=tgSevere],input[name=warfarin],input[name=noac],input[name=severeAS]').forEach(cb=>cb.checked=false);
   $('#dietLv').value=1; $('#exLv').value=1; $('#dietLv').dispatchEvent(new Event('change'));
+  VACCINES_B.forEach(v=>{const sel=$('#vaxB_status_'+v.id);if(sel)sel.value='';const n=v.doses||1;for(let i=0;i<n;i++){const d=$('#vaxB_date_'+v.id+'_'+i);if(d)d.value='';}});
+  if(typeof refreshVaxHintsB==='function')refreshVaxHintsB();
   renderVitalsRows([]); renderLabsRows([]);
   $('#alertBox').classList.remove('show'); $('#dbMsg').className='dbmsg'; $('#hnStatus').textContent='';
 });
+</script>
+
+<script>
+/* ── eGFR (CKD-EPI 2021, race-free) สำหรับแผนดูแลฯ ── */
+(function(){
+  function ckdEpi(scr,age,sex){
+    scr=parseFloat(scr);age=parseFloat(age);
+    if(!scr||!age||!sex)return null;
+    var fem=(sex==='female'),k=fem?0.7:0.9,al=fem?-0.241:-0.302,r=scr/k;
+    var e=142*Math.pow(Math.min(r,1),al)*Math.pow(Math.max(r,1),-1.200)*Math.pow(0.9938,age);
+    if(fem)e*=1.012;return Math.round(e);
+  }
+  function stage(e){
+    if(e==null)return null;
+    if(e>=90)return{g:'G1',t:'ปกติ',c:'ok'};
+    if(e>=60)return{g:'G2',t:'ลดลงเล็กน้อย',c:'ok'};
+    if(e>=45)return{g:'G3a',t:'โรคไตเรื้อรัง ระยะ 3a (ปานกลาง)',c:'warn'};
+    if(e>=30)return{g:'G3b',t:'โรคไตเรื้อรัง ระยะ 3b (ปานกลาง-มาก)',c:'bad'};
+    if(e>=15)return{g:'G4',t:'โรคไตเรื้อรัง ระยะ 4 (รุนแรง)',c:'bad'};
+    return{g:'G5',t:'ไตวายระยะสุดท้าย (ระยะ 5)',c:'bad'};
+  }
+  function calc(){
+    var box=document.getElementById('cpEgfrBox'); if(!box)return;
+    var cr=document.getElementById('lab_cr'), ageEl=document.getElementById('age'), sexEl=document.getElementById('sex');
+    var scr=cr?parseFloat(cr.value):NaN, age=ageEl?parseFloat(ageEl.value):NaN, sex=sexEl?sexEl.value:'';
+    if(!scr||!age||!sex){ box.style.background='#F8FAFC'; box.innerHTML='<span style="color:#64748B">eGFR (CKD-EPI 2021): กรอก Cr, เพศ และอายุ</span>'; return; }
+    var e=ckdEpi(scr,age,sex), st=stage(e);
+    var col=st.c==='ok'?'#0E7A6D':st.c==='warn'?'#B45309':'#B91C1C';
+    box.style.background=st.c==='ok'?'#ECFDF5':st.c==='warn'?'#FFFBEB':'#FEF2F2';
+    var chip=e<60
+      ?'<span style="background:'+col+';color:#fff;font-weight:700;padding:2px 9px;border-radius:999px;font-size:12px;">'+st.g+' · '+st.t+'</span>'
+      :'<span style="color:'+col+';font-weight:600;">'+st.g+' · '+st.t+'</span>';
+    box.innerHTML='<span style="font-weight:700;color:#0F172A;">eGFR <span style="font-size:18px;color:'+col+'">'+e+'</span> <span style="color:#64748B;font-weight:400;font-size:11px;">mL/min/1.73m²</span></span>'+chip+'<span style="color:#94A3B8;font-size:11px;">CKD-EPI 2021</span>';
+  }
+  function wire(){
+    var vd=document.getElementById('visitDate'); if(vd&&!vd.value){var t=new Date();vd.value=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');}
+    ['lab_cr','age'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',calc);});
+    var sx=document.getElementById('sex'); if(sx)sx.addEventListener('change',calc);
+    calc();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire); else wire();
+})();
 </script>
 </body>
 </html>
