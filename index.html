@@ -217,6 +217,14 @@ ul.rl li b{color:var(--teal-deep);font-weight:600}
 .vacc .v .vi{width:30px;height:30px;border-radius:9px;background:var(--teal-soft);display:grid;place-items:center;flex:none;font-size:.95rem}
 .vacc .v .vt{font-family:'Kanit';font-weight:500;font-size:.93rem;color:var(--teal-deep)}
 .vacc .v .vd{font-size:.8rem;color:var(--slate);margin-top:1px}
+.vacc .v.done{background:#f0faf7;border-color:#bfe6dc}
+.vacc .v.done .vi{background:#d6f0e8}
+.vacc .v.na{opacity:.6}
+.vacc .v .vnext{font-size:.78rem;color:var(--teal-deep);font-weight:600;margin-top:2px}
+.vpill{display:inline-block;font-family:'Sarabun';font-size:.68rem;font-weight:700;padding:1px 8px;border-radius:999px;vertical-align:middle;margin-left:4px}
+.vpill.ok{background:#15a89c;color:#fff}
+.vpill.over{background:#e08a2b;color:#fff}
+.vpill.na{background:#e2e8e6;color:#5c6f6c}
 
 .rep-foot{margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}
 .rep-foot .disc{font-size:.78rem;color:var(--faint);line-height:1.5}
@@ -857,6 +865,29 @@ function vaxHintTextB(v){
   return `<span class="vh-info">📅 ${label}: ${vaxThai(due.due)}</span>`;
 }
 function refreshVaxHintsB(){VACCINES_B.forEach(v=>{const el=document.getElementById('vaxhintB_'+v.id);if(el)el.innerHTML=vaxHintTextB(v);});}
+// อ่านสถานะที่บันทึกไว้ เพื่อใช้แสดงในรายงาน (คืน null = ยังไม่ฉีด → ใช้ข้อความแนะนำเดิม)
+function vaxReportStatus(id){
+  if(!id)return null;
+  const v=VACCINES_B.find(x=>x.id===id); if(!v)return null;
+  const status=$('#vaxB_status_'+id)?.value||'';
+  if(status==='na')return {state:'na'};
+  const n=v.doses||1,doses=[];
+  for(let i=0;i<n;i++)doses.push($('#vaxB_date_'+id+'_'+i)?.value||'');
+  const filled=doses.filter(Boolean);
+  if(filled.length===0)return null;            // ยังไม่ฉีด
+  const lastIso=filled[filled.length-1];
+  const lastDate=new Date(lastIso+'T00:00:00');
+  const lastTxt=isNaN(lastDate)?lastIso:vaxThai(lastDate);
+  const due=vaxNextDue(v,status,doses);
+  let next='';
+  if(due){
+    const lbl=due.kind==='series'?('เข็มที่ '+due.doseNo):'ครั้งถัดไป';
+    next=(due.days<=0)?('ถึงกำหนด'+lbl+'แล้ว · '+vaxThai(due.due)):(lbl+' '+vaxThai(due.due));
+  }else if(filled.length>=n){
+    next='ครบแล้ว ไม่ต้องฉีดซ้ำ';
+  }
+  return {state:'done', last:lastTxt, next, overdue:due?due.days<=0:false};
+}
 function renderVaxGridB(){
   const g=document.getElementById('vaxGridB'); if(!g)return;
   g.innerHTML=VACCINES_B.map(v=>{
@@ -1155,19 +1186,19 @@ function buildPlan(p,c,g,track,lab,labTrack){
 
   /* ---- Vaccines ---- */
   const vacc=[];
-  vacc.push(['💉','ไข้หวัดใหญ่ (Influenza)','ฉีดทุกปี — ลดการกำเริบของโรคหัวใจ']);
+  vacc.push(['💉','ไข้หวัดใหญ่ (Influenza)','ฉีดทุกปี — ลดการกำเริบของโรคหัวใจ','flu']);
   if(established||has('dm')||has('ckd')||has('cir')||p.age>=65)
-    vacc.push(['🫁','ปอดอักเสบ (Pneumococcal · PCV20)','สำหรับผู้มีโรคหัวใจเรื้อรัง/เบาหวาน/ไต/ตับ หรืออายุ ≥ 65 ปี']);
+    vacc.push(['🫁','ปอดอักเสบ (Pneumococcal · PCV20)','สำหรับผู้มีโรคหัวใจเรื้อรัง/เบาหวาน/ไต/ตับ หรืออายุ ≥ 65 ปี','pcv20']);
   if(has('acs')||has('hf')||p.age>=60)
-    vacc.push(['🦠','COVID-19','ตามเข็มกระตุ้นที่แนะนำในกลุ่มเสี่ยง']);
+    vacc.push(['🦠','COVID-19','ตามเข็มกระตุ้นที่แนะนำในกลุ่มเสี่ยง','']);
   if(p.age>=75 || (p.age>=60 && (has('hf')||has('ccs')||has('acs')||has('dm')||has('ckd'))))
-    vacc.push(['🌬️','RSV','แนะนำในผู้สูงอายุ ≥ 60–75 ปี ที่มีโรคหัวใจ/ปอด/เบาหวาน']);
+    vacc.push(['🌬️','RSV','แนะนำในผู้สูงอายุ ≥ 60–75 ปี ที่มีโรคหัวใจ/ปอด/เบาหวาน','rsv']);
   if(has('cir')){
-    vacc.push(['🟠','ไวรัสตับอักเสบ เอ (Hepatitis A)','แนะนำในผู้ป่วยโรคตับเรื้อรัง']);
-    vacc.push(['🔵','ไวรัสตับอักเสบ บี (Hepatitis B)','แนะนำในผู้ป่วยโรคตับเรื้อรัง (หากยังไม่มีภูมิ)']);
+    vacc.push(['🟠','ไวรัสตับอักเสบ เอ (Hepatitis A)','แนะนำในผู้ป่วยโรคตับเรื้อรัง','']);
+    vacc.push(['🔵','ไวรัสตับอักเสบ บี (Hepatitis B)','แนะนำในผู้ป่วยโรคตับเรื้อรัง (หากยังไม่มีภูมิ)','hepb']);
   }
-  vacc.push(['🩹','คอตีบ-บาดทะยัก-ไอกรน (Tdap/Td)', has('dm')?'กระตุ้นทุก 10 ปี · สำคัญมากหากมีแผลเบาหวาน':'กระตุ้นทุก 10 ปี']);
-  if(p.age>=50) vacc.push(['🎯','งูสวัด (Shingrix)','แนะนำในผู้อายุ ≥ 50 ปี']);
+  vacc.push(['🩹','คอตีบ-บาดทะยัก-ไอกรน (Tdap/Td)', has('dm')?'กระตุ้นทุก 10 ปี · สำคัญมากหากมีแผลเบาหวาน':'กระตุ้นทุก 10 ปี','tdap']);
+  if(p.age>=50) vacc.push(['🎯','งูสวัด (Shingrix)','แนะนำในผู้อายุ ≥ 50 ปี','shingles']);
 
   /* ---- Conflict flags ---- */
   const flags=[];
@@ -1207,7 +1238,21 @@ function condBadges(c){
 function render(p,c,r){
   const dateStr=new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
   const liList=arr=>arr.map(x=>`<li>${x}</li>`).join('');
-  const vaccHtml=r.vacc.map(v=>`<div class="v"><div class="vi">${v[0]}</div><div><div class="vt">${v[1]}</div><div class="vd">${v[2]}</div></div></div>`).join('');
+  const vaccHtml=r.vacc.map(v=>{
+    const stt=(typeof vaxReportStatus==='function')?vaxReportStatus(v[3]):null;
+    let cls='v', body=`<div class="vd">${v[2]}</div>`;
+    if(stt&&stt.state==='done'){
+      cls='v done';
+      const pill=stt.overdue?'<span class="vpill over">ฉีดแล้ว · ครบกำหนดต่อ</span>':'<span class="vpill ok">✓ ฉีดแล้ว</span>';
+      const nextLine=stt.next?`<div class="vnext">📅 ${stt.next}</div>`:'';
+      body=`<div class="vd">ฉีดล่าสุด ${stt.last}</div>${nextLine}`;
+      return `<div class="${cls}"><div class="vi">${v[0]}</div><div style="flex:1"><div class="vt">${v[1]} ${pill}</div>${body}</div></div>`;
+    }
+    if(stt&&stt.state==='na'){
+      return `<div class="v na"><div class="vi">${v[0]}</div><div style="flex:1"><div class="vt">${v[1]} <span class="vpill na">ไม่จำเป็น</span></div></div></div>`;
+    }
+    return `<div class="${cls}"><div class="vi">${v[0]}</div><div><div class="vt">${v[1]}</div>${body}</div></div>`;
+  }).join('');
   const flagHtml=r.flags.map(f=>`<div class="flag"><b>⚠ ข้อควรพิจารณา:</b> ${f}</div>`).join('');
   const lvbar=(cur)=>{let s='';for(let i=1;i<=20;i++){s+=`<span class="${i<cur?'done':i===cur?'cur':''}"></span>`;}return s;};
   const tasks=(arr)=>`<ul class="tasklist"><li>${arr[0]}</li><li>${arr[1]}</li></ul>`;
