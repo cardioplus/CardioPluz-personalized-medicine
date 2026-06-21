@@ -259,6 +259,17 @@ ul.rl li b{color:var(--teal-deep);font-weight:600}
   border-radius:11px;font-size:.9rem;color:var(--ink);min-height:20px;line-height:1.5}
 .lvprev .lvtag{font-family:'Kanit';font-weight:600;color:var(--teal-deep);margin-right:6px}
 .lvprev:empty{display:none}
+/* level checkbox picker (all 20 levels) */
+.lvpick{margin-top:8px;border:1px solid var(--line);border-radius:12px;max-height:360px;overflow:auto;background:#fff}
+.lvpick .lvrow{display:flex;gap:11px;align-items:flex-start;padding:9px 13px;border-bottom:1px solid var(--line-soft);cursor:pointer}
+.lvpick .lvrow:last-child{border-bottom:none}
+.lvpick .lvrow:hover{background:var(--teal-mist)}
+.lvpick .lvrow.on{background:var(--teal-soft)}
+.lvpick .lvrow input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal);margin-top:2px;flex:none;cursor:pointer}
+.lvpick .lvrow .lvn{font-family:'Kanit';font-weight:600;color:var(--teal-deep);font-size:.9rem;flex:none;min-width:48px}
+.lvpick .lvrow.on .lvn{color:var(--teal-dark)}
+.lvpick .lvrow .lvtx{font-size:.88rem;line-height:1.45;color:var(--ink)}
+
 
 /* tracking input table */
 .trk-wrap{overflow-x:auto}
@@ -279,6 +290,9 @@ table.trk-input-trans tr:first-child input[type=date]{font-weight:600;color:var(
 
 /* goal section in report */
 .goalrow{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:4px}
+.goalcol{display:flex;flex-direction:column;gap:12px}
+.goalcol .colttl{font-family:'Kanit';font-weight:600;color:var(--teal-deep);font-size:1rem}
+.goalcard-empty{border:1px dashed var(--line);border-radius:15px;padding:18px;text-align:center;color:var(--faint);font-size:.9rem;background:var(--teal-mist)}
 @media (max-width:640px){.goalrow{grid-template-columns:1fr}}
 .goalcard{border:1px solid var(--line);border-radius:15px;padding:16px 18px;background:linear-gradient(180deg,var(--teal-mist),#fff)}
 .goalcard .gtop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
@@ -426,6 +440,7 @@ table.trk-trans tbody tr:nth-child(even) td:first-child{background:var(--teal-mi
             <label>เพศ</label>
             <select id="sex"><option value="female">หญิง</option><option value="male">ชาย</option></select>
           </div>
+          <div class="field"><label>วันเกิด <span class="unit">(คำนวณอายุอัตโนมัติ)</span></label><input type="date" id="dob"></div>
           <div class="field"><label>อายุ <span class="unit">(ปี)</span></label><input type="number" id="age" min="1" max="120" placeholder="60"></div>
           <div class="field"><label>น้ำหนัก <span class="unit">(กก.)</span></label><input type="number" id="wt" min="20" max="250" step="0.1" placeholder="65"></div>
           <div class="field"><label>ส่วนสูง <span class="unit">(ซม.)</span></label><input type="number" id="ht" min="100" max="220" placeholder="160"></div>
@@ -582,22 +597,20 @@ table.trk-trans tbody tr:nth-child(even) td:first-child{background:var(--teal-mi
     <!-- ===== STEP 3: monthly goal levels ===== -->
     <div class="card">
       <div class="card-head"><div class="step">3</div>
-        <div><h2>เป้าหมายของเดือนนี้ (Level 1–20)</h2><p>แพทย์เลือกว่ารอบนี้คนไข้ปรับถึงระดับใด — ค่อยๆ ไต่จากง่ายไปยาก</p></div>
+        <div><h2>เป้าหมายของเดือนนี้ (Level 1–20)</h2><p>ติ๊กหน้าระดับที่ต้องการให้คนไข้ทำเดือนนี้ — เลือกได้หลายระดับ · เฉพาะที่ติ๊กจะถูกพิมพ์ในรายงาน</p></div>
       </div>
       <div class="card-body">
         <div class="grid g2">
           <div class="field">
-            <label>🥗 ระดับเป้าหมายด้านอาหาร</label>
-            <select id="dietLv"></select>
-            <div class="lvprev" id="dietPrev"></div>
+            <label>🥗 ระดับเป้าหมายด้านอาหาร <span class="unit">(ติ๊กระดับที่ต้องการ)</span></label>
+            <div class="lvpick" id="dietLvList"></div>
           </div>
           <div class="field">
-            <label>🏃 ระดับเป้าหมายการออกกำลังกาย</label>
-            <select id="exLv"></select>
-            <div class="lvprev" id="exPrev"></div>
+            <label>🏃 ระดับเป้าหมายการออกกำลังกาย <span class="unit">(ติ๊กระดับที่ต้องการ)</span></label>
+            <div class="lvpick" id="exLvList"></div>
           </div>
         </div>
-        <p style="margin:14px 0 0;font-size:.84rem;color:var(--faint)">เลือกระดับแล้วข้อความคำแนะนำจะแสดงให้ดูทันที และในรายงานสามารถคลิกแก้ไขข้อความได้</p>
+        <p style="margin:14px 0 0;font-size:.84rem;color:var(--faint)">ติ๊กหน้าระดับที่ต้องการ — ติ๊กได้หลายระดับ · ในรายงานจะพิมพ์เฉพาะระดับที่ติ๊กไว้ และยังคลิกแก้ไขข้อความได้</p>
       </div>
     </div>
 
@@ -906,21 +919,52 @@ function renderVaxGridB(){
   refreshVaxHintsB();
 }
 
-/* ===== init UI: level selects, tracking rows, live preview ===== */
+/* ===== level checkbox picker helpers (all 20 levels, tick to include) ===== */
+function buildLvPicker(listSel, ladder, cls){
+  const host=$(listSel); if(!host) return;
+  host.innerHTML=ladder.map((t,i)=>{
+    const n=i+1;
+    return `<label class="lvrow" data-lv="${n}">`+
+      `<input type="checkbox" class="${cls}" value="${n}">`+
+      `<span class="lvn">Lv ${n}</span>`+
+      `<span class="lvtx">${t[0]} · ${t[1]}</span></label>`;
+  }).join('');
+  host.addEventListener('change',e=>{
+    const row=e.target.closest('.lvrow'); if(row) row.classList.toggle('on',e.target.checked);
+  });
+}
+function getCheckedLevels(cls){
+  return Array.from(document.querySelectorAll('.'+cls+':checked')).map(c=>+c.value).sort((a,b)=>a-b);
+}
+function setCheckedLevels(cls, arr){
+  const set=new Set((arr||[]).map(Number));
+  document.querySelectorAll('.'+cls).forEach(c=>{
+    c.checked=set.has(+c.value);
+    const row=c.closest('.lvrow'); if(row) row.classList.toggle('on',c.checked);
+  });
+}
+/* age from date of birth */
+function ageFromDOB(iso){
+  if(!iso) return null;
+  const b=new Date(iso+'T00:00:00'), now=new Date();
+  if(isNaN(b)) return null;
+  let a=now.getFullYear()-b.getFullYear();
+  const m=now.getMonth()-b.getMonth();
+  if(m<0||(m===0&&now.getDate()<b.getDate())) a--;
+  return (a>=0&&a<=120)?a:null;
+}
+
+/* ===== init UI: level pickers, tracking rows ===== */
 (function initUI(){
   renderVaxGridB();
-  const dl=$('#dietLv'), el=$('#exLv');
-  for(let i=1;i<=20;i++){
-    dl.insertAdjacentHTML('beforeend',`<option value="${i}">Level ${i}</option>`);
-    el.insertAdjacentHTML('beforeend',`<option value="${i}">Level ${i}</option>`);
-  }
-  dl.value=1; el.value=1;
-  const taskList=(arr)=>arr.map(t=>`<div>• ${t}</div>`).join('');
-  const upd=()=>{
-    $('#dietPrev').innerHTML=`<span class="lvtag">อาหาร Lv ${dl.value}:</span>${taskList(dietLadder[dl.value-1])}`;
-    $('#exPrev').innerHTML=`<span class="lvtag">ออกกำลังกาย Lv ${el.value}:</span>${taskList(exLadder[el.value-1])}`;
-  };
-  dl.addEventListener('change',upd); el.addEventListener('change',upd); upd();
+  buildLvPicker('#dietLvList', dietLadder, 'dietLvChk');
+  buildLvPicker('#exLvList',   exLadder,   'exLvChk');
+  setCheckedLevels('dietLvChk',[1]);   // ค่าเริ่มต้น: ติ๊ก Lv 1
+  setCheckedLevels('exLvChk',[1]);
+
+  // วันเกิด → คำนวณอายุอัตโนมัติ
+  const dob=$('#dob');
+  if(dob) dob.addEventListener('change',()=>{ const a=ageFromDOB(dob.value); if(a!=null) $('#age').value=a; });
 
   // initialize empty cumulative tables (5 rows each)
   renderVitalsRows([]);
@@ -934,6 +978,7 @@ function readForm(){
     hn:get('#hn'),
     name:get('#name')||'ผู้รับบริการ',
     sex:$('#sex').value,
+    dob:get('#dob'),
     age:num('#age'), wt:num('#wt'), ht:num('#ht'),
     sbp:num('#sbp'), dbp:num('#dbp'), rhr:num('#rhr'),
     act:parseFloat($('#act').value), smoke:$('#smoke').value
@@ -954,8 +999,8 @@ function readForm(){
   c.ascites = document.querySelector('input[name=ascites]')?.checked;
   c.tgSevere = document.querySelector('input[name=tgSevere]')?.checked;
 
-  // monthly goal levels
-  const g={ diet:parseInt($('#dietLv').value)||1, ex:parseInt($('#exLv').value)||1 };
+  // monthly goal levels (ติ๊กได้หลายระดับ — เฉพาะที่ติ๊กจะถูกพิมพ์)
+  const g={ diet:getCheckedLevels('dietLvChk'), ex:getCheckedLevels('exLvChk') };
 
   // cumulative tracking: read tables, then auto-insert today's visit (for the report)
   var _vd=document.getElementById('visitDate'); const td=(_vd&&_vd.value)?_vd.value:todayStr();
@@ -1209,12 +1254,14 @@ function buildPlan(p,c,g,track,lab,labTrack){
   if(has('cir') && has('ckd'))
     flags.push('ตับแข็งต้องการโปรตีนเพียงพอ แต่โรคไตต้องจำกัดโปรตีน — เป็นภาวะที่ขัดแย้งกัน <b>ต้องให้แพทย์/นักกำหนดอาหารกำหนดปริมาณเฉพาะราย</b>');
 
-  /* ---- Monthly goal (levels) ---- */
-  const gd=g?g.diet:1, ge=g?g.ex:1;
+  /* ---- Monthly goal (levels) — ติ๊กได้หลายระดับ, พิมพ์เฉพาะที่ติ๊ก ---- */
+  const normLv=v=>Array.isArray(v)?v.slice():(v?[+v]:[]);
+  const dietLvs=normLv(g&&g.diet).filter(n=>n>=1&&n<=20).sort((a,b)=>a-b);
+  const exLvs  =normLv(g&&g.ex).filter(n=>n>=1&&n<=20).sort((a,b)=>a-b);
   const goal={
-    dietLv:gd, exLv:ge,
-    dietText:dietLadder[gd-1], exText:exLadder[ge-1],
-    dietNext:gd<20?dietLadder[gd]:null, exNext:ge<20?exLadder[ge]:null,
+    dietLvs, exLvs,
+    dietItems:dietLvs.map(n=>({lv:n,text:dietLadder[n-1]})),
+    exItems:  exLvs.map(n=>({lv:n,text:exLadder[n-1]})),
     focus:focusTips(c),
     hrCaution:(acsEarly||has('hf')||vhdPostEarly||(vhdPreop&&c.severeAS))
       ? `ออกกำลังกายต้องไม่เกินโซนหัวใจเป้าหมายของคุณ (${hrLo}–${hrHi} ครั้ง/นาที) ไม่ว่าจะอยู่ Level ใด`
@@ -1257,6 +1304,18 @@ function render(p,c,r){
   const lvbar=(cur)=>{let s='';for(let i=1;i<=20;i++){s+=`<span class="${i<cur?'done':i===cur?'cur':''}"></span>`;}return s;};
   const tasks=(arr)=>`<ul class="tasklist"><li>${arr[0]}</li><li>${arr[1]}</li></ul>`;
   const goalFocusHtml=r.goal.focus.length?`<div class="goalfocus"><div class="subh">โฟกัสเฉพาะโรคของคุณเดือนนี้</div><ul class="rl">${liList(r.goal.focus)}</ul></div>`:'';
+  const goalCardHtml=(item)=>`<div class="goalcard">`+
+      `<div class="gtop"><span class="gttl">Level ${item.lv}</span><span class="glv"><b>${item.lv}</b>/20</span></div>`+
+      `<div class="lvbar">${lvbar(item.lv)}</div>`+
+      `<div class="goaltext" contenteditable="true">${tasks(item.text)}</div>`+
+      `<div class="editmark">✎ คลิกเพื่อแก้ไขข้อความได้</div></div>`;
+  const dietColHtml=r.goal.dietItems.length
+    ? r.goal.dietItems.map(goalCardHtml).join('')
+    : '<div class="goalcard-empty">ไม่ได้เลือกระดับด้านอาหาร</div>';
+  const exColHtml=r.goal.exItems.length
+    ? r.goal.exItems.map(goalCardHtml).join('')
+    : '<div class="goalcard-empty">ไม่ได้เลือกระดับการออกกำลังกาย</div>';
+  const goalLvLabel=`อาหาร ${r.goal.dietLvs.join(', ')||'–'} · ออกกำลังกาย ${r.goal.exLvs.join(', ')||'–'}`;
   const bl=v=>(v===undefined||v===null||v==='')?'<span style="color:var(--faint)">–</span>':v;
   const fmtD=d=>{ if(!d)return '–'; const a=d.split('-'); return a.length===3?`${a[2]}/${a[1]}/${a[0].slice(2)}`:d; };
   // transposed table: parameters as rows (Y), dates as columns (X). entries are newest-first.
@@ -1348,21 +1407,15 @@ function render(p,c,r){
     ${flagHtml}
 
     <div class="sec sec-goal">
-      <div class="sec-h"><span class="dot"></span><h3>เป้าหมายของเดือนนี้</h3><span class="en">THIS MONTH · LEVEL ${r.goal.dietLv}/${r.goal.exLv}</span></div>
+      <div class="sec-h"><span class="dot"></span><h3>เป้าหมายของเดือนนี้</h3><span class="en">THIS MONTH · ${goalLvLabel}</span></div>
       <div class="goalrow">
-        <div class="goalcard">
-          <div class="gtop"><span class="gttl">🥗 ด้านอาหาร</span><span class="glv"><b>${r.goal.dietLv}</b>/20</span></div>
-          <div class="lvbar">${lvbar(r.goal.dietLv)}</div>
-          <div class="goaltext" contenteditable="true">${tasks(r.goal.dietText)}</div>
-          <div class="editmark">✎ คลิกเพื่อแก้ไขข้อความได้</div>
-          ${r.goal.dietNext?`<div class="goalnext"><b>เป้าหมายถัดไป (Lv ${r.goal.dietLv+1}):</b> ${r.goal.dietNext.join(' · ')}</div>`:'<div class="goalnext"><b>ถึงระดับสูงสุดแล้ว 🎉</b> รักษาให้สม่ำเสมอ</div>'}
+        <div class="goalcol">
+          <div class="colttl">🥗 ด้านอาหาร</div>
+          ${dietColHtml}
         </div>
-        <div class="goalcard">
-          <div class="gtop"><span class="gttl">🏃 ออกกำลังกาย</span><span class="glv"><b>${r.goal.exLv}</b>/20</span></div>
-          <div class="lvbar">${lvbar(r.goal.exLv)}</div>
-          <div class="goaltext" contenteditable="true">${tasks(r.goal.exText)}</div>
-          <div class="editmark">✎ คลิกเพื่อแก้ไขข้อความได้</div>
-          ${r.goal.exNext?`<div class="goalnext"><b>เป้าหมายถัดไป (Lv ${r.goal.exLv+1}):</b> ${r.goal.exNext.join(' · ')}</div>`:'<div class="goalnext"><b>ถึงระดับสูงสุดแล้ว 🎉</b> รักษาให้สม่ำเสมอ</div>'}
+        <div class="goalcol">
+          <div class="colttl">🏃 ออกกำลังกาย</div>
+          ${exColHtml}
         </div>
       </div>
       ${r.goal.hrCaution?`<div class="flag"><b>⚠ ความปลอดภัย:</b> ${r.goal.hrCaution}</div>`:''}
@@ -1523,10 +1576,11 @@ function dbMsg(text,kind){
 function getProfile(){
   const val=id=>$(id).value;
   const st={ hn:val('#hn').trim(), name:val('#name'), sex:val('#sex'),
+    dob:val('#dob'),
     age:val('#age'), wt:val('#wt'), ht:val('#ht'), sbp:val('#sbp'), dbp:val('#dbp'),
     rhr:val('#rhr'), act:val('#act'), smoke:val('#smoke'),
     labs:{ fbs:val('#lab_fbs'),a1c:val('#lab_a1c'),cr:val('#lab_cr'),tc:val('#lab_tc'),tg:val('#lab_tg'),hdl:val('#lab_hdl'),ldl:val('#lab_ldl') },
-    levels:{ diet:val('#dietLv'), ex:val('#exLv') },
+    levels:{ diet:getCheckedLevels('dietLvChk'), ex:getCheckedLevels('exLvChk') },
     conditions:{},
     updatedAt:new Date().toISOString()
   };
@@ -1547,13 +1601,15 @@ function getProfile(){
 // repopulate form from saved state
 function setState(st){
   const set=(id,v)=>{ if(v!==undefined&&v!==null) $(id).value=v; };
-  set('#name',st.name); set('#sex',st.sex); set('#age',st.age); set('#wt',st.wt);
+  set('#name',st.name); set('#sex',st.sex); set('#dob',st.dob); set('#age',st.age); set('#wt',st.wt);
   set('#ht',st.ht); set('#sbp',st.sbp); set('#dbp',st.dbp); set('#rhr',st.rhr);
   set('#act',st.act); set('#smoke',st.smoke);
   if(st.labs){ set('#lab_fbs',st.labs.fbs);set('#lab_a1c',st.labs.a1c);set('#lab_cr',st.labs.cr);
     set('#lab_tc',st.labs.tc);set('#lab_tg',st.labs.tg);set('#lab_hdl',st.labs.hdl);set('#lab_ldl',st.labs.ldl);
     set('#lab_wbc',st.labs.wbc);set('#lab_plt',st.labs.plt);set('#lab_ft4',st.labs.ft4);set('#lab_t3',st.labs.t3); }
-  if(st.levels){ set('#dietLv',st.levels.diet||1); set('#exLv',st.levels.ex||1); $('#dietLv').dispatchEvent(new Event('change')); }
+  if(st.levels){ const toArr=v=>Array.isArray(v)?v:(v?[+v]:[]);   // รองรับข้อมูลเดิมที่เก็บเป็นค่าเดียว
+    setCheckedLevels('dietLvChk', toArr(st.levels.diet));
+    setCheckedLevels('exLvChk',   toArr(st.levels.ex)); }
   // conditions
   document.querySelectorAll('.cond').forEach(el=>{
     const on=st.conditions&&st.conditions[el.dataset.k];
@@ -1745,7 +1801,8 @@ $('#resetBtn').addEventListener('click',()=>{
   document.querySelectorAll('.cond input[type=checkbox]').forEach(cb=>{cb.checked=false;});
   document.querySelectorAll('.cond').forEach(c=>{c.classList.remove('on');const e=c.querySelector('.extra');if(e)e.classList.remove('show');});
   document.querySelectorAll('input[name=ascites],input[name=tgSevere],input[name=warfarin],input[name=noac],input[name=severeAS]').forEach(cb=>cb.checked=false);
-  $('#dietLv').value=1; $('#exLv').value=1; $('#dietLv').dispatchEvent(new Event('change'));
+  document.querySelectorAll('input[type=date]').forEach(i=>i.value='');
+  setCheckedLevels('dietLvChk',[1]); setCheckedLevels('exLvChk',[1]);
   VACCINES_B.forEach(v=>{const sel=$('#vaxB_status_'+v.id);if(sel)sel.value='';const n=v.doses||1;for(let i=0;i<n;i++){const d=$('#vaxB_date_'+v.id+'_'+i);if(d)d.value='';}});
   if(typeof refreshVaxHintsB==='function')refreshVaxHintsB();
   renderVitalsRows([]); renderLabsRows([]);
