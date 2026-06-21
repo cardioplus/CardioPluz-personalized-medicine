@@ -104,6 +104,10 @@ input:focus,select:focus{outline:none;border-color:var(--teal);background:#fff;
   box-shadow:0 0 0 4px rgba(21,168,156,.12)}
 .bp-row{display:flex;align-items:center;gap:10px}
 .bp-row span{color:var(--faint);font-weight:600}
+.dob-row{display:flex;gap:8px}
+.dob-row .dob-sel{flex:1;min-width:0;padding-left:10px;padding-right:6px}
+.dob-row .dob-month{flex:1.5}
+.dob-row .dob-year{flex:1.3}
 
 /* ---------- Condition checklist ---------- */
 .cond-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
@@ -440,7 +444,13 @@ table.trk-trans tbody tr:nth-child(even) td:first-child{background:var(--teal-mi
             <label>เพศ</label>
             <select id="sex"><option value="female">หญิง</option><option value="male">ชาย</option></select>
           </div>
-          <div class="field"><label>วันเกิด <span class="unit">(คำนวณอายุอัตโนมัติ)</span></label><input type="date" id="dob"></div>
+          <div class="field"><label>วันเกิด <span class="unit">(พ.ศ. · คำนวณอายุอัตโนมัติ)</span></label>
+            <div class="dob-row">
+              <select id="dobDay" class="dob-sel" aria-label="วัน"></select>
+              <select id="dobMonth" class="dob-sel dob-month" aria-label="เดือน"></select>
+              <select id="dobYear" class="dob-sel dob-year" aria-label="ปี พ.ศ."></select>
+            </div>
+          </div>
           <div class="field"><label>อายุ <span class="unit">(ปี)</span></label><input type="number" id="age" min="1" max="120" placeholder="60"></div>
           <div class="field"><label>น้ำหนัก <span class="unit">(กก.)</span></label><input type="number" id="wt" min="20" max="250" step="0.1" placeholder="65"></div>
           <div class="field"><label>ส่วนสูง <span class="unit">(ซม.)</span></label><input type="number" id="ht" min="100" max="220" placeholder="160"></div>
@@ -953,6 +963,50 @@ function ageFromDOB(iso){
   if(m<0||(m===0&&now.getDate()<b.getDate())) a--;
   return (a>=0&&a<=120)?a:null;
 }
+/* ===== date-of-birth selects (พ.ศ.) — เก็บภายในเป็น ค.ศ. (ISO) ===== */
+const TH_MONTHS_FULL=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+function daysInMonth(y,m){ return new Date(y,m,0).getDate(); }   // m=1..12, y ค.ศ.
+function buildDobSelects(){
+  const dSel=$('#dobDay'), mSel=$('#dobMonth'), ySel=$('#dobYear');
+  if(!dSel||!mSel||!ySel) return;
+  mSel.innerHTML='<option value="">เดือน</option>'+TH_MONTHS_FULL.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
+  const nowBE=new Date().getFullYear()+543;
+  let yo='<option value="">ปี พ.ศ.</option>';
+  for(let y=nowBE;y>=nowBE-120;y--) yo+=`<option value="${y}">${y}</option>`;
+  ySel.innerHTML=yo;
+  rebuildDobDays();
+  [dSel,mSel,ySel].forEach(s=>s.addEventListener('change',()=>{ rebuildDobDays(); syncAgeFromDOB(); }));
+}
+function rebuildDobDays(){
+  const dSel=$('#dobDay'), mSel=$('#dobMonth'), ySel=$('#dobYear');
+  if(!dSel) return;
+  const m=+mSel.value, beY=+ySel.value, y=beY?beY-543:2000;
+  const max=(m>=1&&m<=12)?daysInMonth(y,m):31;
+  const cur=dSel.value;
+  dSel.innerHTML='<option value="">วัน</option>'+Array.from({length:max},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+  if(cur&&+cur<=max) dSel.value=cur;
+}
+function getDobISO(){
+  const dSel=$('#dobDay'), mSel=$('#dobMonth'), ySel=$('#dobYear');
+  if(!dSel||!mSel||!ySel) return '';
+  const d=+dSel.value, m=+mSel.value, beY=+ySel.value;
+  if(!d||!m||!beY) return '';
+  const y=beY-543, dt=new Date(y,m-1,d);
+  if(dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==d) return '';
+  const pad=n=>String(n).padStart(2,'0');
+  return `${y}-${pad(m)}-${pad(d)}`;
+}
+function setDobFromISO(iso){
+  const dSel=$('#dobDay'), mSel=$('#dobMonth'), ySel=$('#dobYear');
+  if(!dSel||!mSel||!ySel) return;
+  const a=(iso?String(iso).slice(0,10).split('-'):[]);
+  if(a.length===3){
+    ySel.value=String(+a[0]+543); mSel.value=String(+a[1]); rebuildDobDays(); dSel.value=String(+a[2]);
+  }else{
+    ySel.value=''; mSel.value=''; rebuildDobDays(); dSel.value='';
+  }
+}
+function syncAgeFromDOB(){ const iso=getDobISO(); if(iso){ const a=ageFromDOB(iso); if(a!=null) $('#age').value=a; } }
 
 /* ===== init UI: level pickers, tracking rows ===== */
 (function initUI(){
@@ -962,9 +1016,8 @@ function ageFromDOB(iso){
   setCheckedLevels('dietLvChk',[1]);   // ค่าเริ่มต้น: ติ๊ก Lv 1
   setCheckedLevels('exLvChk',[1]);
 
-  // วันเกิด → คำนวณอายุอัตโนมัติ
-  const dob=$('#dob');
-  if(dob) dob.addEventListener('change',()=>{ const a=ageFromDOB(dob.value); if(a!=null) $('#age').value=a; });
+  // วันเกิดแบบ พ.ศ. — เลือก วัน/เดือน/ปี ง่ายกว่าปฏิทินในเครื่อง
+  buildDobSelects();
 
   // initialize empty cumulative tables (5 rows each)
   renderVitalsRows([]);
@@ -978,7 +1031,7 @@ function readForm(){
     hn:get('#hn'),
     name:get('#name')||'ผู้รับบริการ',
     sex:$('#sex').value,
-    dob:get('#dob'),
+    dob:getDobISO(),
     age:num('#age'), wt:num('#wt'), ht:num('#ht'),
     sbp:num('#sbp'), dbp:num('#dbp'), rhr:num('#rhr'),
     act:parseFloat($('#act').value), smoke:$('#smoke').value
@@ -1576,7 +1629,7 @@ function dbMsg(text,kind){
 function getProfile(){
   const val=id=>$(id).value;
   const st={ hn:val('#hn').trim(), name:val('#name'), sex:val('#sex'),
-    dob:val('#dob'),
+    dob:getDobISO(),
     age:val('#age'), wt:val('#wt'), ht:val('#ht'), sbp:val('#sbp'), dbp:val('#dbp'),
     rhr:val('#rhr'), act:val('#act'), smoke:val('#smoke'),
     labs:{ fbs:val('#lab_fbs'),a1c:val('#lab_a1c'),cr:val('#lab_cr'),tc:val('#lab_tc'),tg:val('#lab_tg'),hdl:val('#lab_hdl'),ldl:val('#lab_ldl') },
@@ -1601,7 +1654,7 @@ function getProfile(){
 // repopulate form from saved state
 function setState(st){
   const set=(id,v)=>{ if(v!==undefined&&v!==null) $(id).value=v; };
-  set('#name',st.name); set('#sex',st.sex); set('#dob',st.dob); set('#age',st.age); set('#wt',st.wt);
+  set('#name',st.name); set('#sex',st.sex); setDobFromISO(st.dob); set('#age',st.age); set('#wt',st.wt);
   set('#ht',st.ht); set('#sbp',st.sbp); set('#dbp',st.dbp); set('#rhr',st.rhr);
   set('#act',st.act); set('#smoke',st.smoke);
   if(st.labs){ set('#lab_fbs',st.labs.fbs);set('#lab_a1c',st.labs.a1c);set('#lab_cr',st.labs.cr);
@@ -1802,6 +1855,7 @@ $('#resetBtn').addEventListener('click',()=>{
   document.querySelectorAll('.cond').forEach(c=>{c.classList.remove('on');const e=c.querySelector('.extra');if(e)e.classList.remove('show');});
   document.querySelectorAll('input[name=ascites],input[name=tgSevere],input[name=warfarin],input[name=noac],input[name=severeAS]').forEach(cb=>cb.checked=false);
   document.querySelectorAll('input[type=date]').forEach(i=>i.value='');
+  setDobFromISO('');
   setCheckedLevels('dietLvChk',[1]); setCheckedLevels('exLvChk',[1]);
   VACCINES_B.forEach(v=>{const sel=$('#vaxB_status_'+v.id);if(sel)sel.value='';const n=v.doses||1;for(let i=0;i<n;i++){const d=$('#vaxB_date_'+v.id+'_'+i);if(d)d.value='';}});
   if(typeof refreshVaxHintsB==='function')refreshVaxHintsB();
