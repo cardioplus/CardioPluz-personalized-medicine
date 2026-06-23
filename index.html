@@ -531,18 +531,13 @@ input.ai-filled{background:#ECFDF5!important;border-color:#34D399!important;tran
             <div class="ai-row">
               <label class="ai-up" id="aiUpBtn">
                 <input type="file" id="aiFiles" accept="image/*,application/pdf" multiple hidden>
-                <span>📎 เลือกไฟล์ภาพ/PDF ผลแล็บ (เลือกพร้อมกันได้หลายไฟล์)</span>
+                <span>📎 เลือกไฟล์ผลแล็บ — PDF หรือรูปถ่าย (เลือกพร้อมกันได้หลายไฟล์)</span>
               </label>
               <button type="button" class="btn btn-primary" id="aiRunBtn">✨ อ่านค่าอัตโนมัติ</button>
-              <button type="button" class="ai-cog" id="aiCfgBtn" title="ตั้งค่า API key">⚙️</button>
             </div>
             <div class="ai-files" id="aiFileList"></div>
             <div class="ai-status" id="aiStatus"></div>
-            <div class="ai-cfg" id="aiCfg" style="display:none">
-              <label>Anthropic API Key <span class="unit">(เก็บในเครื่องนี้เท่านั้น)</span></label>
-              <input type="password" id="aiKey" placeholder="sk-ant-..." autocomplete="off">
-              <div class="ai-cfg-note">⚠️ คีย์ถูกบันทึกในเบราว์เซอร์เครื่องนี้ (localStorage) · ใช้เฉพาะบนเครื่องของคลินิกเพื่อความปลอดภัย (PDPA) · ระบบส่งไฟล์ไปยัง Anthropic API โดยตรงเพื่ออ่านค่าผลแล็บเท่านั้น ไม่ผ่านเซิร์ฟเวอร์อื่น</div>
-            </div>
+            <div class="ai-cfg-note" style="margin-top:8px">🔒 อ่านค่าในเครื่องนี้ทั้งหมด — ไม่มีค่าใช้จ่าย ไม่ต้องใช้ API key และข้อมูลคนไข้ไม่ถูกส่งออกไปที่ใด (ดีต่อ PDPA) · ไฟล์ PDF ที่เป็นตัวอักษรจะอ่านได้แม่นที่สุด ส่วนรูปถ่ายใช้ OCR (ครั้งแรกจะโหลดตัวอ่านราว 10–15 MB) · กรุณาตรวจทานค่าก่อนบันทึกทุกครั้ง</div>
           </div>
 
           <div class="field" style="margin-top:12px"><label>📅 วันที่ตรวจ</label><input type="date" id="visitDate"></div>
@@ -846,6 +841,12 @@ const LAB_SCHEMA=[
   {cat:'การทำงานของไต', en:'KIDNEY', icon:'🫘', items:[
     {key:'cr',   en:'Creatinine', th:'ครีอะตินิน', unit:'mg/dL', ref:'0.66–1.25', step:'0.01'},
     {key:'egfr', en:'eGFR', th:'อัตราการกรองของไต', unit:'mL/min', ref:'≥ 90', step:'0.1'},
+  ]},
+  {cat:'เกลือแร่', en:'ELECTROLYTES', icon:'🧂', items:[
+    {key:'na', en:'Sodium (Na)', th:'โซเดียม', unit:'mmol/L', ref:'135–145', step:'0.1'},
+    {key:'k',  en:'Potassium (K)', th:'โพแทสเซียม', unit:'mmol/L', ref:'3.5–5.5', step:'0.01'},
+    {key:'cl', en:'Chloride (Cl)', th:'คลอไรด์', unit:'mmol/L', ref:'98–108', step:'0.1'},
+    {key:'co2', en:'CO2 (Bicarbonate)', th:'ไบคาร์บอเนต', unit:'mmol/L', ref:'21–31', step:'0.1'},
   ]},
   {cat:'การทำงานของตับ', en:'LIVER', icon:'🧪', items:[
     {key:'ast',  en:'AST (SGOT)', th:'เอนไซม์ตับ AST', unit:'U/L', ref:'17–59'},
@@ -2012,53 +2013,84 @@ $('#resetBtn').addEventListener('click',()=>{
   $('#alertBox').classList.remove('show'); $('#dbMsg').className='dbmsg'; $('#hnStatus').textContent='';
 });
 
-/* ===== AI autofill: อ่านผลแล็บจากไฟล์ภาพ/PDF ด้วย Anthropic API ===== */
+/* ===== อ่านผลแล็บจากไฟล์ภาพ/PDF — ทำงานในเครื่อง ฟรี ไม่ต้องใช้ API key ===== */
 (function(){
-  const KEYLS='cardiopluz_anthropic_key';
   const g=id=>document.getElementById(id);
-  const filesEl=g('aiFiles'),runBtn=g('aiRunBtn'),statusEl=g('aiStatus'),listEl=g('aiFileList'),
-        cfgBtn=g('aiCfgBtn'),cfg=g('aiCfg'),keyEl=g('aiKey');
+  const filesEl=g('aiFiles'),runBtn=g('aiRunBtn'),statusEl=g('aiStatus'),listEl=g('aiFileList');
   if(!filesEl||!runBtn) return;
+  const PDFJS_URL='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+  const PDFJS_WORKER='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+  const TESS_URL='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
   let picked=[];
-  try{ const k=localStorage.getItem(KEYLS); if(k&&keyEl) keyEl.value=k; }catch(e){}
-  if(cfgBtn) cfgBtn.addEventListener('click',()=>{ cfg.style.display=(cfg.style.display==='none')?'block':'none'; });
-  if(keyEl) keyEl.addEventListener('change',()=>{ try{ localStorage.setItem(KEYLS,keyEl.value.trim()); }catch(e){} });
   filesEl.addEventListener('change',()=>{ picked=Array.from(filesEl.files||[]); renderList(); if(picked.length) setStatus(picked.length+' ไฟล์พร้อมอ่าน — กดปุ่ม ✨ อ่านค่าอัตโนมัติ',''); });
   function renderList(){ listEl.innerHTML=picked.map(f=>`<span class="ai-chip">${(f.type||'').includes('pdf')?'📄':'🖼️'} ${f.name}</span>`).join(''); }
   function setStatus(m,k){ statusEl.textContent=m; statusEl.className='ai-status'+(k?(' '+k):''); }
-  function b64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(',')[1]); r.onerror=()=>rej(new Error('อ่านไฟล์ไม่สำเร็จ')); r.readAsDataURL(file); }); }
-  const schemaTxt=LAB_ITEMS.map(it=>`"${it.key}" = ${it.en} (${it.th})${it.unit?' ['+it.unit+']':''}`).join('\n');
-  const PROMPT='คุณเป็นผู้ช่วยอ่านผลตรวจแล็บทางการแพทย์ จากไฟล์ภาพ/PDF ที่แนบมา ดึงค่าผลตรวจให้ครบที่สุด\n'+
-    'ตอบกลับเป็น JSON object เพียงอย่างเดียว ไม่มีคำอธิบาย ไม่มี markdown โดยใช้คีย์ตามรายการนี้เท่านั้น และเว้นคีย์ที่ไม่พบไว้:\n'+schemaTxt+'\n'+
-    'นอกจากนี้ ถ้าพบวันที่ตรวจ/วันเก็บตัวอย่าง ให้ใส่คีย์ "visitDate" รูปแบบ YYYY-MM-DD (ถ้าเป็น พ.ศ. ให้ลบ 543 เป็น ค.ศ.)\n'+
-    'กติกา: คีย์ที่เป็นค่าตัวเลขให้ใส่เฉพาะตัวเลข ไม่ต้องใส่หน่วยหรือ flag H/L · คีย์ผลปัสสาวะและ serology ใส่เป็นข้อความ เช่น Negative, Positive, Yellow, Clear, Non-reactive\n'+
-    'ตัวอย่าง: {"fbs":"97","cr":"0.99","ldl":"152","ast":"23","hbsag":"Negative","visitDate":"2026-06-22"}';
-  async function run(){
-    const key=(keyEl&&keyEl.value.trim())||'';
-    if(!key){ setStatus('กรุณาใส่ Anthropic API key ก่อน (กดปุ่ม ⚙️)','err'); cfg.style.display='block'; return; }
-    if(!picked.length){ setStatus('ยังไม่ได้เลือกไฟล์ภาพหรือ PDF','err'); return; }
-    runBtn.disabled=true; const ob=runBtn.textContent; runBtn.textContent='⏳ กำลังอ่าน...';
-    setStatus('กำลังส่งไฟล์ให้ AI อ่านค่า ('+picked.length+' ไฟล์)...','');
-    try{
-      const content=[];
-      for(const f of picked){
-        const data=await b64(f);
-        if((f.type||'').includes('pdf')) content.push({type:'document',source:{type:'base64',media_type:'application/pdf',data}});
-        else content.push({type:'image',source:{type:'base64',media_type:f.type||'image/jpeg',data}});
-      }
-      content.push({type:'text',text:PROMPT});
-      const resp=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,messages:[{role:'user',content}]})
+  function loadScript(src){ return new Promise((res,rej)=>{ if([...document.scripts].some(s=>s.src===src)) return res(); const s=document.createElement('script'); s.src=src; s.onload=()=>res(); s.onerror=()=>rej(new Error('โหลดไลบรารีไม่สำเร็จ')); document.head.appendChild(s); }); }
+  async function ensurePdf(){ if(!window.pdfjsLib){ await loadScript(PDFJS_URL); } if(window.pdfjsLib&&window.pdfjsLib.GlobalWorkerOptions) window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_WORKER; }
+  async function ensureTess(){ if(!window.Tesseract){ setStatus('กำลังโหลดตัวอ่านรูป (ครั้งแรกอาจช้า)...',''); await loadScript(TESS_URL); } }
+
+  function readArrayBuffer(f){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(new Error('อ่านไฟล์ไม่สำเร็จ')); r.readAsArrayBuffer(f); }); }
+
+  async function pdfText(arrbuf){
+    await ensurePdf();
+    const pdf=await window.pdfjsLib.getDocument({data:arrbuf}).promise;
+    const lines=[]; let total=0; const pages=[];
+    for(let p=1;p<=pdf.numPages;p++){
+      const page=await pdf.getPage(p); pages.push(page);
+      const tc=await page.getTextContent();
+      const rows={};
+      tc.items.forEach(it=>{ const s=(it.str||''); if(!s.trim())return; const y=Math.round(it.transform[5]); (rows[y]=rows[y]||[]).push([it.transform[4],s]); total+=s.length; });
+      Object.keys(rows).map(Number).sort((a,b)=>b-a).forEach(y=>{
+        const ln=rows[y].sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(' ').replace(/\s+/g,' ').trim();
+        if(ln) lines.push(ln);
       });
-      if(!resp.ok){ const t=await resp.text(); throw new Error('API '+resp.status+' — '+t.slice(0,180)); }
-      const data=await resp.json();
-      let txt=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
-      txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();
-      const m=txt.match(/\{[\s\S]*\}/); if(m) txt=m[0];
-      fillFromObj(JSON.parse(txt));
-    }catch(e){ console.error(e); setStatus('อ่านไม่สำเร็จ: '+e.message,'err'); }
+    }
+    // scanned PDF (no text layer) -> OCR each page
+    if(total<40){
+      await ensureTess();
+      const worker=await window.Tesseract.createWorker('eng');
+      for(const page of pages){
+        const vp=page.getViewport({scale:2});
+        const cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
+        await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+        const {data:{text}}=await worker.recognize(cv);
+        text.split(/\r?\n/).forEach(l=>{ if(l.trim()) lines.push(l.trim()); });
+      }
+      await worker.terminate();
+    }
+    return lines.join('\n');
+  }
+  function fileToImage(file){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(img); img.onerror=()=>rej(new Error('โหลดรูปไม่สำเร็จ')); img.src=URL.createObjectURL(file); }); }
+  function upscale(img){
+    const maxSide=2200, scale=Math.min(3,Math.max(1,maxSide/Math.max(img.width,img.height)));
+    const cv=document.createElement('canvas'); cv.width=Math.round(img.width*scale); cv.height=Math.round(img.height*scale);
+    const ctx=cv.getContext('2d'); ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high'; ctx.drawImage(img,0,0,cv.width,cv.height);
+    try{ const d=ctx.getImageData(0,0,cv.width,cv.height),p=d.data; for(let i=0;i<p.length;i+=4){ const v=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2]; p[i]=p[i+1]=p[i+2]=v; } ctx.putImageData(d,0,0); }catch(e){}
+    return cv;
+  }
+  async function imgText(file){
+    await ensureTess();
+    const worker=await window.Tesseract.createWorker('eng');
+    try{ await worker.setParameters({tessedit_pageseg_mode:'6'}); }catch(e){}
+    let src=file; try{ src=upscale(await fileToImage(file)); }catch(e){}
+    const {data:{text}}=await worker.recognize(src);
+    await worker.terminate();
+    return text;
+  }
+
+  async function run(){
+    if(!picked.length){ setStatus('ยังไม่ได้เลือกไฟล์ผลแล็บ','err'); return; }
+    runBtn.disabled=true; const ob=runBtn.textContent; runBtn.textContent='⏳ กำลังอ่าน...';
+    try{
+      let allText='';
+      for(const f of picked){
+        setStatus('กำลังอ่าน: '+f.name+' ...','');
+        if((f.type||'').includes('pdf')||/\.pdf$/i.test(f.name)){ allText+='\n'+await pdfText(await readArrayBuffer(f)); }
+        else { allText+='\n'+await imgText(f); }
+      }
+      const obj=parseLabText(allText);
+      fillFromObj(obj);
+    }catch(e){ console.error(e); setStatus('อ่านไม่สำเร็จ: '+e.message+' — ลองไฟล์ที่ชัดขึ้นหรือกรอกเอง','err'); }
     finally{ runBtn.disabled=false; runBtn.textContent=ob; }
   }
   function fillFromObj(obj){
@@ -2071,9 +2103,66 @@ $('#resetBtn').addEventListener('click',()=>{
       }
     });
     const cr=g('lab_cr'); if(cr) cr.dispatchEvent(new Event('input',{bubbles:true}));
-    setStatus(n?('✓ กรอกให้แล้ว '+n+' ค่า — โปรดตรวจทานความถูกต้องก่อนบันทึก'):'ไม่พบค่าที่อ่านได้ — ลองไฟล์ที่ชัดขึ้น','ok');
+    setStatus(n?('✓ กรอกให้แล้ว '+n+' ค่า — โปรดตรวจทานความถูกต้องก่อนบันทึก'):'ไม่พบค่าที่อ่านได้ — ลองไฟล์ที่ชัดขึ้น หรือกรอกเอง','ok');
   }
   runBtn.addEventListener('click',run);
+
+  /* ---- parseLabText: แกะค่าจากข้อความ (ปรับให้เข้ากับใบแล็บ MT Lab) ---- */
+  function parseLabText(raw){
+    const out={};
+    const lines=String(raw||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    for(const ln of lines){ const m=ln.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if(m){ let y=+m[3]; if(y>2400) y-=543; out.visitDate=`${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`; break; } }
+    const N='num',T='txt';
+    const defs=[
+      ['a1c',['%hba1c','hba1c'],N,'any'],['fbs',['glucose','fbs','fasting blood sugar'],N,'pre'],
+      ['tc',['cholesterol'],N,'any'],['tg',['triglycerides','triglyceride'],N,'any'],
+      ['hdl',['hdl-c','hdl'],N,'any'],['ldl',['ldl-c cal','ldl-c','ldl'],N,'any'],
+      ['nonhdl',['non-hdl-c','non-hdl','non hdl','nonhdl'],N,'any'],['cr',['creatinine'],N,'any'],
+      ['egfr',['egfr','gfr'],N,'any'],
+      ['na',['sodium','na+'],N,'any'],['k',['potassium','k+'],N,'any'],['cl',['chloride','cl-'],N,'any'],['co2',['co2','cco2','coz','hco3','bicarbonate','total co2','tco2'],N,'any'],
+      ['ast',['sgot/ast','ast (sgot)','ast/sgot','ast','sgot'],N,'any'],
+      ['alt',['sgpt/alt','alt (sgpt)','alt/sgpt','alt','sgpt'],N,'any'],['alp',['alp','alkaline phosphatase'],N,'any'],
+      ['ggt',['ggt','gamma-gt','gamma gt','ggtp'],N,'any'],
+      ['tbil',['total bilirubin','bilirubin total','bilirubin (total)','tbil','t.bilirubin'],N,'any'],
+      ['dbil',['direct bilirubin','bilirubin direct','bilirubin (direct)','dbil','d.bilirubin'],N,'any'],
+      ['alb',['albumin'],N,'any'],['wbc',['wbc'],N,'pre'],['rbc',['rbc'],N,'pre'],
+      ['hb',['hb','hemoglobin','haemoglobin','hgb'],N,'pre'],['hct',['hct','hematocrit','haematocrit'],N,'pre'],
+      ['mcv',['mcv'],N,'pre'],['mchc',['mchc'],N,'pre'],['mch',['mch'],N,'pre'],['rdw',['rdw'],N,'pre'],
+      ['plt',['platelet count','platelet','plt'],N,'pre'],['neut',['%neutrophil','neutrophil','neut'],N,'pre'],
+      ['lym',['%lymphocyte','lymphocyte','lymph'],N,'pre'],['mono',['%monocyte','monocyte'],N,'pre'],
+      ['eos',['%eosinophil','eosinophil'],N,'pre'],['baso',['%basophil','basophil'],N,'pre'],
+      ['tsh',['tsh'],N,'any'],['ft4',['ft4','free t4','free thyroxine'],N,'any'],['t3',['t3','triiodothyronine'],N,'any'],
+      ['ua_color',['color','colour'],T,'ua'],['ua_appear',['appearance'],T,'ua'],
+      ['ua_sg',['sp.gr','specific gravity','sg'],T,'ua'],['ua_ph',['ph'],T,'ua'],
+      ['ua_pro',['protein'],T,'ua'],['ua_glu',['glucose'],T,'ua'],['ua_ket',['ketone'],T,'ua'],
+      ['ua_blood',['blood'],T,'ua'],['ua_leu',['leukocyte','leucocyte'],T,'ua'],['ua_nit',['nitrite'],T,'ua'],
+      ['ua_uro',['urobilinogen','urobilirubin','urobil'],T,'ua'],['ua_bil',['bilirubin'],T,'ua'],
+      ['ua_wbc',['wbc'],T,'ua'],['ua_rbc',['rbc'],T,'ua'],['ua_epi',['epithelial'],T,'ua'],
+      ['hbsag',['hbsag','hbs ag'],T,'any'],['antihbs',['anti-hbs','anti hbs','antihbs','hbsab'],T,'any'],
+    ];
+    let inUA=false;
+    const titleCase=s=>/[a-z]/i.test(s)?(s.charAt(0).toUpperCase()+s.slice(1).toLowerCase()):s;
+    for(const ln of lines){
+      const low=ln.toLowerCase();
+      if(/urine analysis|urinalysis|ผลตรวจป|ปัสสาวะ/.test(low)) inUA=true;
+      const cleaned=low.replace(/^[\s%*•·\-–—]+/,'');
+      let best=null;
+      for(const [key,aliases,type,sec] of defs){
+        if(sec==='pre'&&inUA) continue; if(sec==='ua'&&!inUA) continue;
+        for(const a of aliases){ if(cleaned.startsWith(a) && (!best||a.length>best.alen)) best={key,type,alen:a.length}; }
+      }
+      if(!best||out[best.key]!==undefined) continue;
+      let rest=cleaned.slice(best.alen).replace(/\([^)]*\)/g,' ').trim();
+      if(best.type==='num'){
+        let val; for(const tk of rest.split(/\s+/)){ if(/^-?\d+(?:\.\d+)?$/.test(tk)){ val=tk; break; } }
+        if(val===undefined){ const m=rest.match(/(?:^|[^a-z\d])(-?\d+(?:\.\d+)?)(?![a-z])/i); if(m) val=m[1]; }
+        if(val!==undefined) out[best.key]=val;
+      }
+      else { const tok=(rest.split(/\s+/)[0]||'').replace(/[,;]+$/,''); if(tok&&tok!=='-') out[best.key]=titleCase(tok); }
+    }
+    if(out.nonhdl===undefined && out.tc && out.hdl){ const v=parseFloat(out.tc)-parseFloat(out.hdl); if(!isNaN(v)) out.nonhdl=String(Math.round(v)); }
+    return out;
+  }
 })();
 </script>
 
